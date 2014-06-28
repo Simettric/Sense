@@ -60,7 +60,7 @@ class Sense extends Container {
         $cache_path       = $this->_cache_dir . "config.php";
         $userMatcherCache = new ConfigCache($cache_path, $this["%wp.debug_mode%"]);
 //
-        if (true || !$userMatcherCache->isFresh()) {
+        if (!$userMatcherCache->isFresh()) {
 
             $locator = new FileLocator($this->_config_dirs);
             $files   = $locator->locate('config.yml', null, false);
@@ -78,15 +78,14 @@ class Sense extends Container {
 
             $config = $delegatingLoader->process();
 
+//
 
-//
-//            // the code for the UserMatcher is generated elsewhere
-            $code = var_export($config, true);
-//
-            $userMatcherCache->write(serialize($code), $resources);
+            $code = "<?php return '" . serialize($config) . "';";
+            $userMatcherCache->write($code, $resources);
 
         }else{
             $config  = require $cache_path;
+      
             $config  = unserialize($config);
         }
 
