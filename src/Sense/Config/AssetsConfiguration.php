@@ -9,6 +9,7 @@
 namespace Sense\Config;
 
 
+use Sense\Sense;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -25,9 +26,6 @@ class AssetsConfiguration implements ConfigurationInterface
         /**
          * @var $assets_node \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
          */
-
-
-
 
         $assets_node =  $rootNode->children()->arrayNode('assets')->isRequired()->addDefaultsIfNotSet();
 
@@ -82,5 +80,32 @@ class AssetsConfiguration implements ConfigurationInterface
         $assets_node->end();
 
         return $treeBuilder;
+    }
+    
+    function setAssets(array $config, Sense $sense){
+        $theme_assets = $config["assets"]["theme"];
+
+        foreach($theme_assets["scripts"] as $handle=>$params){
+            /**
+             * @var $sense["sense.theme_assets"] AssetManager
+             */
+            $sense["sense.theme_assets"]->addScript(
+                $handle,
+                $sense["%wp.template_uri%"] . $params["file"],
+                1,
+                true,
+                $dependencies=$params["dependencies"]
+            );
+        }
+
+        foreach($theme_assets["styles"] as $handle=>$params){
+            /**
+             * @var $sense["sense.theme_assets"] AssetManager
+             */
+            $sense["sense.theme_assets"]->addStyle(
+                $handle,
+                $sense["%wp.template_uri%"] . $params["file"]
+            );
+        }
     }
 }

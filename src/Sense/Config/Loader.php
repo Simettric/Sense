@@ -7,8 +7,11 @@
  */
 
 namespace Sense\Config;
+use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\FileLoader;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Yaml\Yaml;
 
 class Loader extends FileLoader{
@@ -25,15 +28,31 @@ class Loader extends FileLoader{
     }
 
 
-    function process(){
+    function process(array $files, ConfigurationInterface $configuration, ConfigCache $cache=null){
 
 
         $processor     = new Processor();
-        $configuration = new AssetsConfiguration();
-        return $processor->processConfiguration(
+        $values        = $processor->processConfiguration(
             $configuration,
             $this->_values
         );
+        $resources = array();
+
+        foreach ($files as $yamlUserFile) {
+
+            $this->load($yamlUserFile);
+            $resources[] = new FileResource($yamlUserFile);
+        }
+
+//
+
+        if($cache){
+            $code = "<?php return '" . serialize($values) . "';";
+            $cache->write($code, $resources);
+        }
+
+        return $values;
+
     }
 
     public function supports($resource, $type = null)

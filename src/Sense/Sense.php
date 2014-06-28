@@ -10,6 +10,7 @@ namespace Sense;
 
 
 use Pimple\Container;
+use Sense\Config\AssetsConfiguration;
 use Sense\Config\Loader;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocator;
@@ -57,64 +58,23 @@ class Sense extends Container {
 
     private function _setConfigValues(){
 
-        $cache_path       = $this->_cache_dir . "config.php";
-        $userMatcherCache = new ConfigCache($cache_path, $this["%wp.debug_mode%"]);
-//
+        $cache_path          = $this->_cache_dir . "config.php";
+        $userMatcherCache    = new ConfigCache($cache_path, $this["%wp.debug_mode%"]);
+        $assetsConfiguration = new AssetsConfiguration();
+
         if (!$userMatcherCache->isFresh()) {
 
             $locator = new FileLocator($this->_config_dirs);
             $files   = $locator->locate('config.yml', null, false);
-            //$loaderResolver   = new LoaderResolver(array(new Loader($locator)));
-            //$delegatingLoader = new DelegatingLoader($loaderResolver);
+            
             $delegatingLoader = new Loader($locator);
-
-            $resources = array();
-
-            foreach ($files as $yamlUserFile) {
-
-                $delegatingLoader->load($yamlUserFile);
-                $resources[] = new FileResource($yamlUserFile);
-            }
-
-            $config = $delegatingLoader->process();
-
-//
-
-            $code = "<?php return '" . serialize($config) . "';";
-            $userMatcherCache->write($code, $resources);
+            $delegatingLoader->process($files, $assetsConfiguration, $userMatcherCache);
 
         }else{
-            $config  = require $cache_path;
-      
-            $config  = unserialize($config);
+            $config  = unserialize(require $cache_path);
         }
 
-
-
-        $theme_assets = $config["assets"]["theme"];
-
-        foreach($theme_assets["scripts"] as $handle=>$params){
-            /**
-             * @var $this["sense.theme_assets"] AssetManager
-             */
-            $this["sense.theme_assets"]->addScript(
-                $handle,
-                $this["%wp.template_uri%"] . $params["file"],
-                1,
-                true,
-                $dependencies=$params["dependencies"]
-            );
-        }
-
-        foreach($theme_assets["styles"] as $handle=>$params){
-            /**
-             * @var $this["sense.theme_assets"] AssetManager
-             */
-            $this["sense.theme_assets"]->addStyle(
-                $handle,
-                $this["%wp.template_uri%"] . $params["file"]
-            );
-        }
+        $assetsConfiguration->setAssets($config, $this );
 
     }
 
