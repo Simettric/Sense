@@ -30,21 +30,15 @@ class Loader extends FileLoader{
 
     function process(array $files, ConfigurationInterface $configuration, ConfigCache $cache=null){
 
-
-        $processor     = new Processor();
-        $values        = $processor->processConfiguration(
-            $configuration,
-            $this->_values
-        );
         $resources = array();
-
         foreach ($files as $yamlUserFile) {
 
             $this->load($yamlUserFile);
             $resources[] = new FileResource($yamlUserFile);
         }
+        $processor     = new Processor();
+        $values        = $processor->processConfiguration($configuration, $this->_values);
 
-//
 
         if($cache){
             $code = "<?php return '" . serialize($values) . "';";

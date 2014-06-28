@@ -66,9 +66,9 @@ class Sense extends Container {
 
             $locator = new FileLocator($this->_config_dirs);
             $files   = $locator->locate('config.yml', null, false);
-            
+
             $delegatingLoader = new Loader($locator);
-            $delegatingLoader->process($files, $assetsConfiguration, $userMatcherCache);
+            $config = $delegatingLoader->process($files, $assetsConfiguration, $userMatcherCache);
 
         }else{
             $config  = unserialize(require $cache_path);

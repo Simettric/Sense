@@ -27,7 +27,7 @@ class AssetsConfiguration implements ConfigurationInterface
          * @var $assets_node \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
          */
 
-        $assets_node =  $rootNode->children()->arrayNode('assets')->isRequired()->addDefaultsIfNotSet();
+        $assets_node =  $rootNode->children()->arrayNode('assets')->isRequired();
 
         /**
          * @var $assets_node_children \Symfony\Component\Config\Definition\Builder\NodeBuilder
@@ -39,9 +39,11 @@ class AssetsConfiguration implements ConfigurationInterface
         foreach (array("theme", "admin") as $node_name) {
             $assets_node_children
                 ->arrayNode($node_name)
+                    ->treatNullLike(array())
                     ->children()
                         ->arrayNode('scripts')
                             ->useAttributeAsKey('handle')
+
                             ->prototype('array')
                                 ->children()
                                     ->scalarNode('file')->defaultNull()->end()
@@ -50,6 +52,7 @@ class AssetsConfiguration implements ConfigurationInterface
                                         ->defaultValue("%wp.template_uri%")
                                     ->end()
                                     ->booleanNode('in_footer')->defaultTrue()->end()
+                                    ->scalarNode('version')->defaultValue("1.0")->end()
                                     ->arrayNode('dependencies')
                                         ->treatNullLike(array())
                                         ->prototype('scalar')->end()
@@ -66,6 +69,7 @@ class AssetsConfiguration implements ConfigurationInterface
                                     ->values(array("%wp.template_uri%", "%wp.plugin_uri%"))
                                     ->defaultValue("%wp.template_uri%")
                                 ->end()
+                                ->scalarNode('version')->defaultValue("1.0")->end()
                                 ->arrayNode('dependencies')
                                     ->treatNullLike(array())
                                     ->prototype('scalar')->end()
@@ -91,10 +95,10 @@ class AssetsConfiguration implements ConfigurationInterface
              */
             $sense["sense.theme_assets"]->addScript(
                 $handle,
-                $sense["%wp.template_uri%"] . $params["file"],
-                1,
-                true,
-                $dependencies=$params["dependencies"]
+                $params["file"] ? $params["base_url"] . $params["file"] : null,
+                $params["version"],
+                $params["in_footer"],
+                $params["dependencies"]
             );
         }
 
@@ -104,7 +108,9 @@ class AssetsConfiguration implements ConfigurationInterface
              */
             $sense["sense.theme_assets"]->addStyle(
                 $handle,
-                $sense["%wp.template_uri%"] . $params["file"]
+                $params["file"] ? $params["base_url"] . $params["file"] : null,
+                $params["version"],
+                $params["dependencies"]
             );
         }
     }

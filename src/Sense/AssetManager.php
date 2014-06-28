@@ -57,10 +57,22 @@ class AssetManager {
 
     function onEnqueueScriptsAction(){
         foreach($this->_scripts as $handle=>$item){
-            \wp_enqueue_script( $handle, $item["src"], $item["deps"], $item["ver"], $item["in_footer"] );
+
+            if($item["src"]){
+                \wp_enqueue_script( $handle, $item["src"], $item["deps"], $item["ver"], $item["in_footer"] );
+            }else{
+                \wp_enqueue_script( $handle );
+            }
+
+
         }
         foreach($this->_stylesheets as $handle=>$item){
-            \wp_enqueue_style( $handle, $item["src"], $item["deps"], $item["ver"], $item["media"] );
+
+            if($item["src"]){
+                \wp_enqueue_style( $handle, $item["src"], $item["deps"], $item["ver"], $item["media"] );
+            }else{
+                \wp_enqueue_style( $handle );
+            }
         }
     }
 } 
