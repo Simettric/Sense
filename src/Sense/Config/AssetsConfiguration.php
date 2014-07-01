@@ -95,7 +95,7 @@ class AssetsConfiguration implements ConfigurationInterface
              */
             $sense["sense.theme_assets"]->addScript(
                 $handle,
-                $params["file"] ? $params["base_url"] . $params["file"] : null,
+                $params["file"] ? $sense[$params["base_url"]] . $params["file"] : null,
                 $params["version"],
                 $params["in_footer"],
                 $params["dependencies"]
@@ -108,7 +108,7 @@ class AssetsConfiguration implements ConfigurationInterface
              */
             $sense["sense.theme_assets"]->addStyle(
                 $handle,
-                $params["file"] ? $params["base_url"] . $params["file"] : null,
+                $params["file"] ? $sense[ $params["base_url"] ] . $params["file"] : null,
                 $params["version"],
                 $params["dependencies"]
             );
