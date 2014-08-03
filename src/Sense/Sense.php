@@ -12,13 +12,22 @@ namespace Sense;
 use Pimple\Container;
 use Sense\Config\AssetsConfiguration;
 use Sense\Config\Loader;
+use Sense\Form\TemplateParser;
 use Sense\Model\UserModel;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
+use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\Loader\FilesystemLoader;
+use Symfony\Component\Templating\PhpEngine;
+use Symfony\Component\Validator\Validation;
 
 class Sense extends Container {
 
@@ -34,6 +43,7 @@ class Sense extends Container {
 
 
         $this["%sense.app_dir%"]  = $theme->getDir();
+        $this["%sense.app.mode%"] = "template";
         $config_dirs = (array) ($this["%sense.app_dir%"] . "/Config");
 
 
@@ -102,47 +112,7 @@ class Sense extends Container {
 
 
 
-    private function  configureFormService(){
-        // Overwrite this with your own secret
-        define('CSRF_SECRET', 'c2ioeEU1n48QF2WsHGWd2HmiuUUT6dxr');
 
-        define('VENDOR_DIR', realpath(__DIR__ . '/../vendor'));
-        define('VENDOR_FORM_DIR', VENDOR_DIR . '/symfony/form/Symfony/Component/Form');
-        define('VENDOR_VALIDATOR_DIR', VENDOR_DIR . '/symfony/validator/Symfony/Component/Validator');
-        define('VENDOR_FRAMEWORK_BUNDLE_DIR', VENDOR_DIR . '/symfony/framework-bundle/Symfony/Bundle/FrameworkBundle');
-        define('VIEWS_DIR', realpath(__DIR__ . '/../views'));
-
-// Set up the CSRF provider
-        $csrfProvider = new DefaultCsrfProvider(CSRF_SECRET);
-
-// Set up the Validator component
-        $validator = Validation::createValidator();
-
-//// Set up the Translation component
-//        $translator = new Translator('en');
-//        $translator->addLoader('xlf', new XliffFileLoader());
-//        $translator->addResource('xlf', VENDOR_FORM_DIR . '/Resources/translations/validators.en.xlf', 'en', 'validators');
-//        $translator->addResource('xlf', VENDOR_VALIDATOR_DIR . '/Resources/translations/validators.en.xlf', 'en', 'validators');
-
-// Set up the Templating component
-        $engine = new PhpEngine(new SimpleTemplateNameParser(VIEWS_DIR), new FilesystemLoader(array()));
-//        $engine->addHelpers(array(new TranslatorHelper($translator)));
-
-// Set up the Form component
-        $formFactory = Forms::createFormFactoryBuilder()
-            ->addExtension(new CsrfExtension($csrfProvider))
-            ->addExtension(new TemplatingExtension($engine, null, array(
-                // Will hopefully not be necessary anymore in 2.2
-                VENDOR_FRAMEWORK_BUNDLE_DIR . '/Resources/views/Form',
-            )))
-            ->addExtension(new ValidatorExtension($validator))
-            ->getFormFactory();
-
-
-        $this["sense.formFactory"] = function($c) use($formFactory){
-            return $formFactory;
-        };
-    }
 
 
     private function _setCoreValues(){
@@ -150,6 +120,9 @@ class Sense extends Container {
         $this["%wp.debug_mode%"]    = WP_DEBUG;
         $this["%wp.template_uri%"]  = \get_template_directory_uri();
         $this["%wp.plugin_uri%"]    = \plugin_dir_url($this->_path_dir);
+
+        $this["%sense.app.vendors_dir%"] = $this["%sense.app.mode%"] == "template" ? get_template_directory() . "/vendors/" :  plugin_dir_path() . "/vendors/" ;
+
         $this["sense.theme_assets"] = function($c){
             return new AssetManager();
         };
@@ -171,6 +144,10 @@ class Sense extends Container {
 
         $this["request"]  = function($c){
            return Request::createFromGlobals();
+        };
+
+        $this["sense.form.factory"] = function($c){
+
         };
 
 
