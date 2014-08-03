@@ -47,6 +47,7 @@ class AssetManager {
     }
 
     function addStyle($handle, $url=null, $ver=1, $dependencies=array(), $media="all"){
+
         $this->_stylesheets[$handle] = array(
             'src'       => $url,
             'deps'      => $dependencies,
@@ -56,6 +57,8 @@ class AssetManager {
     }
 
     function onEnqueueScriptsAction(){
+
+
         foreach($this->_scripts as $handle=>$item){
 
             if($item["src"]){

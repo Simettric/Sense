@@ -48,7 +48,7 @@ class AssetsConfiguration implements ConfigurationInterface
                                 ->children()
                                     ->scalarNode('file')->defaultNull()->end()
                                     ->enumNode('base_url')
-                                        ->values(array("%wp.template_uri%", "%wp.plugin_uri%"))
+                                        ->values(array("%wp.template_uri%", "%wp.plugin_uri%", null))
                                         ->defaultValue("%wp.template_uri%")
                                     ->end()
                                     ->booleanNode('in_footer')->defaultTrue()->end()
@@ -66,7 +66,7 @@ class AssetsConfiguration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('file')->defaultNull()->end()
                                 ->enumNode('base_url')
-                                    ->values(array("%wp.template_uri%", "%wp.plugin_uri%"))
+                                    ->values(array("%wp.template_uri%", "%wp.plugin_uri%", null))
                                     ->defaultValue("%wp.template_uri%")
                                 ->end()
                                 ->scalarNode('version')->defaultValue("1.0")->end()
@@ -86,32 +86,42 @@ class AssetsConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
     
-    function setAssets(array $config, Sense $sense){
-        $theme_assets = $config["assets"]["theme"];
+    function setAssets(array $config, Sense $sense, $is_admin=false){
 
-        foreach($theme_assets["scripts"] as $handle=>$params){
-            /**
-             * @var $sense["sense.theme_assets"] AssetManager
-             */
-            $sense["sense.theme_assets"]->addScript(
+
+        $context = $is_admin ? "admin" : "theme";
+
+
+
+
+        $_assets = $config["assets"][$context];
+
+
+
+        foreach($_assets["scripts"] as $handle=>$params){
+
+            $sense["sense.{$context}_assets"]->addScript(
                 $handle,
-                $params["file"] ? $sense[$params["base_url"]] . $params["file"] : null,
+                $params["file"] ? ( $params["base_url"] ? $sense[ $params["base_url"] ] . $params["file"] : $params["file"] ) : null,
                 $params["version"],
                 $params["in_footer"],
                 $params["dependencies"]
             );
         }
 
-        foreach($theme_assets["styles"] as $handle=>$params){
+        foreach($_assets["styles"] as $handle=>$params){
             /**
              * @var $sense["sense.theme_assets"] AssetManager
              */
-            $sense["sense.theme_assets"]->addStyle(
+            $sense["sense.{$context}_assets"]->addStyle(
                 $handle,
-                $params["file"] ? $sense[ $params["base_url"] ] . $params["file"] : null,
+                $params["file"] ? ( $params["base_url"] ? $sense[ $params["base_url"] ] . $params["file"] : $params["file"] ) : null,
                 $params["version"],
                 $params["dependencies"]
             );
         }
+
+
+
     }
 }

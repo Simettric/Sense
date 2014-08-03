@@ -9,14 +9,22 @@
 namespace Sense;
 
 
-class AbstractTheme {
-
-    protected static $_instance;
+abstract class AbstractTheme {
 
 
-    protected  function __construct(){}
+    static $_instance;
 
-    static function init(){
+    protected $_theme_vars=array();
+
+    /**
+     * @var Router
+     */
+    private $_router;
+
+    private function __construct(){}
+
+
+    static function getInstance(){
         if(!self::$_instance){
             $class = \get_called_class();
             self::$_instance = new $class;
@@ -24,9 +32,40 @@ class AbstractTheme {
         return self::$_instance;
     }
 
-    static function  getInstance(){
-        if(!self::$_instance) self::init();
 
-        return self::$_instance;
+    abstract function setUp();
+
+
+    /**
+     * @param Router $router
+     */
+    function setRouter(Router $router){
+        $this->_router = $router;
+    }
+
+    function genUrl($name){
+        return $this->_router->generateUrl($name);
+    }
+
+
+
+    function getMeta($key, $post_id=null, $single=true){
+        if(!$post_id)  $post_id = \get_the_ID();
+
+        return \get_post_meta($post_id, $key, $single);
+
+    }
+
+    function getDir() {
+        $rc = new \ReflectionClass(\get_class($this));
+        return dirname($rc->getFileName());
+    }
+
+    function assign($key, $variable){
+        $this->_theme_vars[$key] = $variable;
+    }
+
+    function get($key){
+        return isset($this->_theme_vars[$key]) ? $this->_theme_vars[$key] : null;//TODO excepcion
     }
 } 
