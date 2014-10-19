@@ -16,6 +16,8 @@ class AssetManager {
 
     private $_admin_mode=false;
 
+    private $_add_media_manager_assets=false;
+
     /**
      * @param bool $admin_mode
      */
@@ -24,7 +26,7 @@ class AssetManager {
     }
 
     function enqueueAssets(){
-        if($this->_admin_mode){
+        if(\is_admin()){
             \add_action( 'admin_enqueue_scripts',  array($this, 'onEnqueueScriptsAction'));
         }else{
             \add_action( 'wp_enqueue_scripts',  array($this, 'onEnqueueScriptsAction'));
@@ -33,9 +35,6 @@ class AssetManager {
 
 
 
-    function loadConfigurationParameters(array $config){
-
-    }
 
     function addScript($handle, $url=null, $ver=1, $in_footer=true, $dependencies=array()){
         $this->_scripts[$handle] = array(
@@ -57,6 +56,7 @@ class AssetManager {
     }
 
     function onEnqueueScriptsAction(){
+
 
 
         foreach($this->_scripts as $handle=>$item){

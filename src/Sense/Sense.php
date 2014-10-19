@@ -14,6 +14,8 @@ use Sense\Config\AssetsConfiguration;
 use Sense\Config\Loader;
 use Sense\Form\TemplateParser;
 use Sense\Model\UserModel;
+use SimpleForm\Config;
+use SimpleForm\FormBuilder;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\DelegatingLoader;
@@ -36,6 +38,9 @@ class Sense extends Container {
     private $_cache_dir;
 
     function __construct(AbstractTheme $theme, $path_dir){
+
+
+        $this->startSessions();
 
         $this->_path_dir    = $path_dir;
         $this->_cache_dir   = WP_CONTENT_DIR . "/cache/";
@@ -69,16 +74,32 @@ class Sense extends Container {
 
     function init(){
 
-        $this["theme"]->setRouter($this["router"]);
+
 
         $this["theme"]->assign("sense.model.user", $this["sense.model.user"]);
         $this["theme"]->assign("request", $this["request"]);
+        $this["theme"]->assign("wp.query", $this["wp.query"]);
 
+        $this["theme"]->setRouter($this["router"]);
+        $this["theme"]->setUserModel($this["sense.model.user"]);
         $this["router"]->init();
 
 
         \is_admin() ? $this["sense.admin_assets"]->enqueueAssets() : $this["sense.theme_assets"]->enqueueAssets();
 
+    }
+
+    function startSessions(){
+        if(!session_id()){
+            $upload_dir = wp_upload_dir();
+
+            if(!is_dir($upload_dir['basedir'] . "/sessions/")){
+                mkdir($upload_dir['basedir'] . "/sessions/", 0777);
+            }
+
+            ini_set("session.save_path", $upload_dir['basedir'] . "/sessions/");
+            session_start(); //required for flash messages
+        }
     }
 
     function setConfigDirectories($directory){
@@ -146,8 +167,16 @@ class Sense extends Container {
            return Request::createFromGlobals();
         };
 
-        $this["sense.form.factory"] = function($c){
+        $this["util"] = function(){
+            return new Util();
+        };
 
+
+        $this["sense.form.config"] = function($c){
+            return new Config();
+        };
+        $this["sense.form.builder"] = function($c){
+            return new FormBuilder($c["sense.form.config"]);
         };
 
 

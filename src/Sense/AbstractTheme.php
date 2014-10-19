@@ -9,6 +9,8 @@
 namespace Sense;
 
 
+use Sense\Model\UserModel;
+
 abstract class AbstractTheme {
 
 
@@ -20,6 +22,16 @@ abstract class AbstractTheme {
      * @var Router
      */
     private $_router;
+
+    /**
+     * @var UserModel
+     */
+    private $_userModel;
+
+    /**
+     * @var Util
+     */
+    protected  $_util;
 
     private function __construct(){}
 
@@ -36,6 +48,12 @@ abstract class AbstractTheme {
     abstract function setUp();
 
 
+
+    function setUserModel(UserModel $model){
+        $this->_userModel = $model;
+    }
+
+
     /**
      * @param Router $router
      */
@@ -43,8 +61,8 @@ abstract class AbstractTheme {
         $this->_router = $router;
     }
 
-    function genUrl($name){
-        return $this->_router->generateUrl($name);
+    function genUrl($name, $params=array(), $absolute=false){
+        return ($absolute ? home_url( '/' ) : '' . $this->_router->generateUrl($name, $params));
     }
 
 
@@ -67,5 +85,34 @@ abstract class AbstractTheme {
 
     function get($key){
         return isset($this->_theme_vars[$key]) ? $this->_theme_vars[$key] : null;//TODO excepcion
+    }
+
+    function getUserModel(){
+        return $this->_userModel;
+    }
+
+    function setUtil(Util $util){
+        $this->_util = $util;
+    }
+
+    /**
+     * @param \WP_Query $query
+     * @return array|string
+     */
+    function paginateLinks(\WP_Query $query=null){
+
+        if(!$query){
+            $query = $this->get("wp.query");
+        }
+
+
+        $constant = 999999999999999;
+        return \paginate_links(array(
+            'base' => str_replace( $constant, '%#%', esc_url( get_pagenum_link( $constant ) ) ),
+            'format' => '?paged=%#%',
+            'current' => max( 1, $query->query_vars["paged"]),
+            'total' => $query->max_num_pages
+        ));
+
     }
 } 

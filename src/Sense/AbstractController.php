@@ -14,12 +14,24 @@ use Sense\ActionResult\WPTemplateActionResult;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+
+/**
+ * Class AbstractController
+ * @package Sense
+ *
+ *
+ * Never call $query->get_posts in a controller if the query_vars were altered
+ */
 abstract class AbstractController {
 
     private $_container;
 
     function __construct(Sense $sense){
         $this->_container = $sense;
+    }
+
+    function generateUrl($url, $params=array()){
+        return $this->get("router")->generateUrl($url, $params);
     }
 
 
@@ -36,12 +48,18 @@ abstract class AbstractController {
 
     function resultResponse($content, $code=200, $headers=array()){
 
-        $response = new Response($content, $code, $headers);
+
+        if($content instanceof Response){
+            $response = $content;
+        }else{
+            $response = new Response($content, $code, $headers);
+        }
+
 
         $result =  new HTTPResponseActionResult();
         $result->setResponse($response);
 
-        return $response;
+        return $result;
 
     }
 
@@ -68,20 +86,15 @@ abstract class AbstractController {
         return $this->_container[$key];
     }
 
-//    function view(){
-//
-//        global $template;
-//
-//        $template_file = \get_template_directory() . "/src/Views/" . ucfirst($this->name) . "/" . $this->view . ".php";
-//
-//        if(file_exists($template_file)){
-//            return $template_file;
-//        }
-//
-//
-//
-//        return $template;
-//    }
+
+    function addScript($name, $url, $version, $deps=array(), $footer=true){
+        $this->get("sense.theme_assets")->addScript($name, $url, $version, $footer, $deps);
+    }
+
+    function addStyle($name, $url, $version, $deps=array()){
+        $this->get("sense.theme_assets")->addStyle($name, $url, $version, $deps);
+    }
+
 
 
 
