@@ -62,7 +62,7 @@ abstract class AbstractTheme {
     }
 
     function genUrl($name, $params=array(), $absolute=false){
-        return ($absolute ? home_url( '/' ) : '' . $this->_router->generateUrl($name, $params));
+        return ($absolute ? home_url( '' ) . $this->_router->generateUrl($name, $params) : '' . $this->_router->generateUrl($name, $params));
     }
 
 

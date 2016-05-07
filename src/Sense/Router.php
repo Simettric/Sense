@@ -10,7 +10,10 @@ namespace Sense;
 
 
 use Sense\ActionResult\AbstractActionResult;
+use Sense\ActionResult\HTTPResponseActionResult;
 use Sense\ActionResult\WPTemplateActionResult;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Router {
 
@@ -46,7 +49,7 @@ class Router {
             $url_params[$_key] = '$matches['.($i+1).']';
         }
 
-        $regexp = '^' . $regexp . '$';
+        $regexp = '^' . $regexp . "$" ;
 
         $params = array_merge($params, $url_params);
         $params["__route_name"] = $name;
@@ -73,6 +76,8 @@ class Router {
 
             $path = str_replace("{" .$required ."}", $params[$required], $path);
         }
+
+        if(substr($path, 0, strlen($path)-1)=="?") str_replace("?", "", $path);
 
 
         return "/" . $path;
@@ -132,6 +137,8 @@ class Router {
 
         global $wp_query;
 
+        remove_action("parse_query", array($this, "match"));
+
         if(!$wp_query->is_main_query() || $this->_already_matched) return;
 
 
@@ -157,18 +164,31 @@ class Router {
 
             if($actionResult instanceof AbstractActionResult){
 
-                if($actionResult instanceof WPTemplateActionResult){
+                if($actionResult instanceof WPTemplateActionResult) {
 
-                    \add_filter( 'template_include', array($actionResult, "templateInclude") );
+                    \add_filter('template_include', array($actionResult, "templateInclude"));
 
                 }else{
 
-
+                    /**
+                     * @var $response Response
+                     */
                     $response = $actionResult->getResponse();
-                    $response->send();
-                    exit();
-                }
 
+                    if($response instanceof JsonResponse){
+                        wp_send_json(json_decode($response->getContent(), true));
+                    }else{
+
+                        $response->send();
+
+
+                    }
+
+                    exit();
+
+
+
+                }
             }
 
 

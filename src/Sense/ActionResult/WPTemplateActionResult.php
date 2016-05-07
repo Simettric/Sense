@@ -20,11 +20,12 @@ class WPTemplateActionResult extends AbstractActionResult  {
     function templateInclude(){
         global $template;
 
+
+
         $template_file = $this->_params["template"];
 
 
         if(file_exists($template_file)){
-
             return $template_file;
         }
 

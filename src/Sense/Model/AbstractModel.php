@@ -100,17 +100,6 @@ abstract class AbstractModel {
 
 
 
-    function getOEmbedHtml($post_id, $meta_key, $width, $height){
-
-        //die(var_dump($this->getMeta($post_id, $meta_key)));
-
-        if($data = $this->getMeta($post_id, $meta_key)){
-            $html = \preg_replace('/width=["\']?([^"\' ]*)["\' ]/', $width , $data->html);
-
-            return \preg_replace('/height=["\']?([^"\' ]*)["\' ]/', '\1"' . $height . '"\2', $html);
-        }
-    }
-
 
 
 

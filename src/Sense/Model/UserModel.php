@@ -90,9 +90,14 @@ class UserModel {
                 $user = $user->user_login;
             }
 
+        }else{
+        
+            
+        
         }
 
         $user = \wp_authenticate($user, $password);
+        
 
         if($user instanceof \WP_User){
             \wp_set_current_user( $user->ID, $user->user_login );
@@ -307,6 +312,5 @@ class UserModel {
         if ( $message && !wp_mail( $user->user_email, wp_specialchars_decode( $title ), $message ) )
             wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function.') );
 
-        die( $key . "   " . $hashed);
     }
 } 
