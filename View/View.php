@@ -8,17 +8,25 @@
 namespace Simettric\Sense\View;
 
 
+use Simettric\Sense\Router\UrlGenerator;
 use Simettric\Sense\Traits\ArrayTrait;
 
 class View {
 
 	use ArrayTrait;
 
-	private $styles = array();
-
-	private $javascripts = array();
 
 	private $parameters = array();
+
+	/**
+	 * @var UrlGenerator
+	 */
+	private $urlGenerator;
+
+
+	function __construct(UrlGenerator $urlGenerator){
+		$this->urlGenerator = $urlGenerator;
+	}
 
 
 	function get($key, $default=null){
@@ -30,39 +38,13 @@ class View {
 	}
 
 
-	function addStyle($key, $url, $version, $dependencies=array(), $media="all"){
-		$this->styles[$key] = array(
-			'src'       => $url,
-			'dependencies'  => $dependencies,
-			'version'   => $version,
-			'media'     => $media
-		);
+	function path($name, $params){
+		return $this->urlGenerator->generateUrl($name, $params);
 	}
 
-	function addScript($key, $url, $version, $in_footer=true, $dependencies=array()){
-		$this->javascripts[$key] = array(
-			'src'       => $url,
-			'dependencies'  => $dependencies,
-			'version'   => $version,
-			'in_footer' => $in_footer
-		);
+	function url($name, $params){
+		return $this->urlGenerator->generateUrl($name, $params, true);
 	}
 
 
-	function onEnqueueScriptsAction(){
-		foreach($this->javascripts as $handle=>$item){
-			if($item["src"]){
-				\wp_enqueue_script( $handle, $item["src"], $item["dependencies"], $item["version"], $item["in_footer"] );
-			}else{
-				\wp_enqueue_script( $handle );
-			}
-		}
-		foreach($this->styles as $handle=>$item){
-			if($item["src"]){
-				\wp_enqueue_style( $handle, $item["src"], $item["dependencies"], $item["version"], $item["media"] );
-			}else{
-				\wp_enqueue_style( $handle );
-			}
-		}
-	}
 } 

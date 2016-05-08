@@ -23,7 +23,7 @@ abstract class AbstractInterceptor extends AbstractBaseController{
 			static::$executed = true;
 
 		return $executed;
-		
+
 	}
 
 

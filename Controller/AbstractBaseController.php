@@ -40,8 +40,8 @@ abstract class AbstractBaseController {
 	}
 
 
-	function generateUrl($url, $params=array()){
-		return $this->container->get("router")->generateUrl($url, $params);
+	function generateUrl($url, $params=array(), $absolute=false){
+		return $this->container->get("router")->generateUrl($url, $params, $absolute);
 	}
 
 

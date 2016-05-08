@@ -15,11 +15,21 @@ class UrlGenerator {
      */
     private $routerContainer;
 
-    function __construct(RouteContainer $routeContainer){
+	/**
+	 * @var AbsoluteUrlGeneratorInterface
+	 */
+	private $absoluteUrlGenerator;
+
+    function __construct(RouteContainer $routeContainer, AbsoluteUrlGeneratorInterface $absoluteUrlGenerator){
         $this->routerContainer = $routeContainer;
+	    $this->absoluteUrlGenerator = $absoluteUrlGenerator;
     }
 
-    function generateUrl($name, $params=array()){
+	function setAbsoluteUrlGenerator(AbsoluteUrlGeneratorInterface $absoluteUrlGenerator){
+		$this->absoluteUrlGenerator = $absoluteUrlGenerator;
+	}
+
+    function generateUrl($name, $params=array(), $absolute=false){
 
         if(!$route = $this->routerContainer->get($name)){
             return null;
@@ -41,8 +51,13 @@ class UrlGenerator {
         if(substr($path, 0, strlen($path)-1)=="?") str_replace("?", "", $path);
 
 
-        return "/" . $path;
+        return $absolute ? $this->getAbsoluteUrl($path) : ("/" . $path);
 
     }
+
+
+	function getAbsoluteUrl($path){
+		return $this->absoluteUrlGenerator->createUrl($path);
+	}
 
 } 
