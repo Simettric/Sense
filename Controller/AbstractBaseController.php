@@ -27,11 +27,11 @@ abstract class AbstractBaseController {
 	}
 
 	function addScript($name, $url, $version, $deps=array(), $footer=true){
-		$this->container->get("view")->addScript($name, $url, $version, $footer, $deps);
+		$this->container->get("view_assets")->addScript($name, $url, $version, $footer, $deps);
 	}
 
 	function addStyle($name, $url, $version, $deps=array()){
-		$this->container->get("view")->addStyle($name, $url, $version, $deps);
+		$this->container->get("view_assets")->addStyle($name, $url, $version, $deps);
 	}
 
 
