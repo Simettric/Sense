@@ -14,34 +14,17 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractController {
-
-    /**
-     * @var Container
-     */
-    private $_container;
-
-    function __construct(Container $container){
-        $this->_container = $container;
-    }
-
-    function get($key){
-        return $this->_container->get($key);
-    }
-
-    function generateUrl($url, $params=array()){
-        return $this->get("router")->generateUrl($url, $params);
-    }
+abstract class AbstractController extends AbstractBaseController {
 
 
     function resultTemplate($template, $params=array()){
 
         foreach($params as $name=>$param){
-            $this->_container->get("view")->set($name, $param);
+            $this->container->get("view")->set($name, $param);
         }
 
         return new WPTemplateActionResult(
-            $this->_container->getParameter("view_dir") . "/View/" .$template
+            $this->container->getParameter("view_dir") . "/View/" .$template
         );
     }
 
@@ -75,12 +58,5 @@ abstract class AbstractController {
 
 
 
-    function addScript($name, $url, $version, $deps=array(), $footer=true){
-        $this->get("view")->addScript($name, $url, $version, $footer, $deps);
-    }
-
-    function addStyle($name, $url, $version, $deps=array()){
-        $this->get("view")->addStyle($name, $url, $version, $deps);
-    }
 
 } 
