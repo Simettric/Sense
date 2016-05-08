@@ -37,7 +37,7 @@ abstract class AbstractController {
     function resultTemplate($template, $params=array()){
 
         foreach($params as $name=>$param){
-            $this->_container->get("view")->assign($name, $param);
+            $this->_container->get("view")->set($name, $param);
         }
 
         return new WPTemplateActionResult(
