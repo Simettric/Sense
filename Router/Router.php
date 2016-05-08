@@ -70,7 +70,7 @@ class Router {
             return $qvars;
         });
 
-        \add_action("parse_query", array($this, "match"));
+
 
     }
 

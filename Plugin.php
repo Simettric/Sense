@@ -8,6 +8,8 @@
 namespace Simettric\Sense;
 
 
+use Collections\Collection;
+
 class Plugin {
 
 
@@ -16,9 +18,30 @@ class Plugin {
      */
     private $debug_mode;
 
+
+    /**
+     * @var Collection
+     */
+    private $plugins;
+
+
+    function __construct(){
+        $this->plugins = new Collection("Simettric\\Sense\\PluginInterface");
+    }
+
+
     function init($debug_mode=false){
         $this->debug_mode = $debug_mode;
     }
+
+
+    function register(PluginInterface $plugin){
+        $this->plugins->add($plugin);
+    }
+
+
+
+
 
 
 

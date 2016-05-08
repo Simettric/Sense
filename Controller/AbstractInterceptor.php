@@ -12,9 +12,21 @@ abstract class AbstractInterceptor extends AbstractBaseController{
 
 	protected static $executed = false;
 
+    /**
+     * @return bool
+     */
+    abstract function canBeExecuted();
+
+    /**
+     * @param \WP_Query $query
+     * @return void
+     */
 	abstract function execute(\WP_Query $query);
 
 
+    /**
+     * @return bool
+     */
 	function isExecuted(){
 
 		$executed = static::$executed;
