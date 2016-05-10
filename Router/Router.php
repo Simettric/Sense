@@ -10,6 +10,7 @@ namespace Simettric\Sense\Router;
 
 use Simettric\Sense\ActionResult\ActionResultInterface;
 use Simettric\Sense\ActionResult\WPTemplateActionResult;
+use Simettric\Sense\Traits\ArrayTrait;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 class Router {
 
 
+    use ArrayTrait;
 
     public $controller_instance, $action_name;
 
@@ -38,10 +40,7 @@ class Router {
     }
 
 
-
-
-
-    function init(){
+    function registerRouteRules(){
 
         $extra = array();
         foreach ($this->routeContainer->getRoutes() as $name=>$route) {
@@ -54,11 +53,13 @@ class Router {
             foreach($params as $param){
                 $extra[$param] = $param;
             }
+
         }
 
 
         \add_filter("query_vars", function($qvars) use ($extra){
-            $qvars[] = '__controller';
+            $qvars[] = '__controller_name';
+            $qvars[] = '__action_name';
             $qvars[] = "__route_name";
             foreach ($extra as $param) {
                 $qvars[] = $param;
@@ -81,14 +82,10 @@ class Router {
         if(!$wp_query->is_main_query() || $this->_already_matched) return;
 
 
-        if(isset($wp_query->query_vars["__controller"]) &&
-            $controller_classname = $wp_query->query_vars["__controller"]){
+        if( $controller_classname = $this->getArrayValue("__controller_name", $wp_query->query_vars) &&
+            $action_name  = $this->getArrayValue("__action_name", $wp_query->query_vars) ){
 
             $this->_already_matched = true;
-
-            $action_name = $wp_query->query_vars["__action"] ? $wp_query->query_vars["__action"] . "Action" : "indexAction";
-
-            $controller_classname = str_replace('\\\\','\\', $controller_classname);
 
             $this->controller_instance  = new $controller_classname($this->_container);
 
@@ -100,6 +97,10 @@ class Router {
             if($actionResult instanceof ActionResultInterface){
 
                 $actionResult->execute();
+
+            }else{
+
+                throw new \Exception($controller_classname . "::" . $action_name . " must to return an ActionResult object");
 
             }
 

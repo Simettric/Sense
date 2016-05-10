@@ -51,7 +51,7 @@ class RouteContainer {
         if(isset($params["__controller"])){
             $controller_name= $this->transformControllerName($params["__controller"]);
             $params["__controller_name"] = $controller_name["controller_name"];
-            $params["__action_name"] = $controller_name["action_name"];
+            $params["__action_name"]     = $controller_name["action_name"];
         }
 
         $url = "index.php?" . http_build_query($params, '', "&");
