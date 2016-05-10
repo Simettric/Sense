@@ -35,8 +35,8 @@ class UrlGenerator {
             return null;
         }
 
-        $path       = $route["path"];
-        $url_params = array_keys($route["url_params"]);
+        $path       = $route->getPath();
+        $url_params = array_keys($route->getUrlParams());
 
         foreach($url_params as $required){
             if(!isset($params[$required])){
@@ -51,7 +51,7 @@ class UrlGenerator {
         if(substr($path, 0, strlen($path)-1)=="?") str_replace("?", "", $path);
 
 
-        return $absolute ? $this->getAbsoluteUrl($path) : ("/" . $path);
+        return $absolute ? $this->getAbsoluteUrl($path) : $path;
 
     }
 

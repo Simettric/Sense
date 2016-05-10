@@ -24,6 +24,8 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
      */
     private $route_container;
 
+    private $controller_dummy = "Simettric:Sense:Tests:Router:Dummy:index";
+
     function setUp(){
 
         $this->route_container = new RouteContainer();
@@ -37,11 +39,11 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
 
     function testGenerateUrl(){
 
-        $this->route_container->add("test_path", "/test-path");
+        $this->route_container->add("test_path", "/test-path", ["__controller"=>$this->controller_dummy]);
 
         $this->assertEquals("/test-path", $this->url_generator->generateUrl("test_path"));
 
-        $this->route_container->add("test_params", "/test/{param}");
+        $this->route_container->add("test_params", "/test/{param}", ["__controller"=>$this->controller_dummy]);
 
         $this->assertEquals("/test/test", $this->url_generator->generateUrl("test_params", ["param" => "test"]));
 
@@ -53,7 +55,7 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
      */
     function testGenerateUrlWithoutParams(){
 
-        $this->route_container->add("test_params", "/test/{param}");
+        $this->route_container->add("test_params", "/test/{param}", ["__controller"=>$this->controller_dummy]);
 
         $this->url_generator->generateUrl("test_params");
 
@@ -61,7 +63,7 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
 
     function testGenerateAbsoluteUrl(){
 
-        $this->route_container->add("test_path", "/test");
+        $this->route_container->add("test_path", "/test", ["__controller"=>$this->controller_dummy]);
 
         $this->assertEquals("http://example.com/es/test",
             $this->url_generator->generateUrl("test_path",

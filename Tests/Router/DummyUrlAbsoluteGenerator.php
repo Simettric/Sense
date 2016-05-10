@@ -14,7 +14,7 @@ class DummyUrlAbsoluteGenerator implements AbsoluteUrlGeneratorInterface{
 
     function createUrl($path)
     {
-        return "http://example.com/es/" . $path;
+        return "http://example.com/es" . $path;
     }
 
 }

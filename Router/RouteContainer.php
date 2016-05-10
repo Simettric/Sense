@@ -8,6 +8,7 @@
 namespace Simettric\Sense\Router;
 
 
+use Collections\Collection;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class RouteContainer {
@@ -21,44 +22,30 @@ class RouteContainer {
         return $this->routes;
     }
 
+    /**
+     * @param $name
+     * @return Route|null
+     */
     function get($name){
         return isset($this->routes[$name]) ? $this->routes[$name] : null;
     }
 
-    function add($name, $path,  $params=array(),  $requirements=array()){
+    function add($name, $path, $params=array(), $methods=array("GET"), $requirements=array()){
 
 
-        if(strpos($path, "/")===0){
-            $path = substr($path, 1, strlen($path));
-        }
-        \preg_match_all('({\w+})', $path, $found_params);
-        $found_params = isset($found_params[0]) && is_array($found_params[0]) ? $found_params[0] : array();
-
-        $url_params = array();
-        $regexp = $path;
-        foreach($found_params as $i=>$_param){
-            $_key   = str_replace(array("{","}"), "", $_param);
-            $_expr = !isset($requirements[$_key]) ? '(\w+)' : $requirements[$_key];
-            $regexp   = str_replace($_param, $_expr, $regexp);
-            $url_params[$_key] = '$matches['.($i+1).']';
-        }
-
-        $regexp = '^' . $regexp . "$" ;
-
-        $params = array_merge($params, $url_params);
+        $controller_name= $this->transformControllerName($params["__controller"]);
+        unset($params["__controller"]);
         $params["__route_name"] = $name;
 
-        if(isset($params["__controller"])){
-            $controller_name= $this->transformControllerName($params["__controller"]);
-            $params["__controller_name"] = $controller_name["controller_name"];
-            $params["__action_name"]     = $controller_name["action_name"];
-        }
-
-        $url = "index.php?" . http_build_query($params, '', "&");
-        $url = urldecode($url);
-
-
-        $this->routes[$name] = array("path" => $path, "regexp"=>$regexp, "url"=>$url, "params"=>$params, "url_params"=>$url_params);
+        $this->routes[$name] = new Route(
+            $name,
+            $path,
+            $controller_name["controller_name"],
+            $controller_name["action_name"],
+            $methods,
+            $params,
+            $requirements
+        );
 
     }
 

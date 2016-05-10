@@ -58,8 +58,6 @@ class Router {
 
 
         \add_filter("query_vars", function($qvars) use ($extra){
-            $qvars[] = '__controller_name';
-            $qvars[] = '__action_name';
             $qvars[] = "__route_name";
             foreach ($extra as $param) {
                 $qvars[] = $param;
@@ -82,17 +80,16 @@ class Router {
         if(!$wp_query->is_main_query() || $this->_already_matched) return;
 
 
-        if( $controller_classname = $this->getArrayValue("__controller_name", $wp_query->query_vars) &&
-            $action_name  = $this->getArrayValue("__action_name", $wp_query->query_vars) ){
+        $route_name = $this->getArrayValue("__route_name", $wp_query->query_vars);
+
+        /**
+         * @var $route Route
+         */
+        if( $route = $this->routeContainer->get($route_name) ){
 
             $this->_already_matched = true;
 
-            $this->controller_instance  = new $controller_classname($this->_container);
-
-            $actionResult = $this->controller_instance->$action_name(
-                $this->_container->get("request"),
-                $this->_container->get("wp.query")
-            );
+            $actionResult = $this->executeControllerAction($route);
 
             if($actionResult instanceof ActionResultInterface){
 
@@ -100,11 +97,28 @@ class Router {
 
             }else{
 
-                throw new \Exception($controller_classname . "::" . $action_name . " must to return an ActionResult object");
+                throw new \Exception($route->getControllerClassName() . "::" . $route->getActionName() . " must to return an ActionResult object");
 
             }
 
         }
+
+    }
+
+    /**
+     * @param Route $route
+     * @return ActionResultInterface
+     * @throws \Exception
+     */
+    function executeControllerAction(Route $route){
+
+        $controller_name = $route->getControllerClassName();
+        $action_name     = $route->getActionName();
+        return call_user_func(
+                    [new $controller_name($this->_container), $action_name],
+                    $this->_container->get("request"),
+                    $this->_container->get("wp.query")
+        );
 
     }
 

@@ -8,6 +8,12 @@
 namespace Simettric\Sense\Tests\Router;
 
 
-class DummyController {
+use Simettric\Sense\Controller\AbstractController;
+
+class DummyController extends AbstractController{
+
+    function fakeAction(){
+        return $this->resultResponse("test");
+    }
 
 } 
