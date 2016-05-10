@@ -43,8 +43,6 @@ class Router {
 
     function init(){
 
-
-
         $extra = array();
         foreach ($this->routeContainer->getRoutes() as $name=>$route) {
 
@@ -61,7 +59,6 @@ class Router {
 
         \add_filter("query_vars", function($qvars) use ($extra){
             $qvars[] = '__controller';
-            $qvars[] = '__action';
             $qvars[] = "__route_name";
             foreach ($extra as $param) {
                 $qvars[] = $param;
@@ -89,11 +86,7 @@ class Router {
 
             $this->_already_matched = true;
 
-
-
             $action_name = $wp_query->query_vars["__action"] ? $wp_query->query_vars["__action"] . "Action" : "indexAction";
-
-
 
             $controller_classname = str_replace('\\\\','\\', $controller_classname);
 
@@ -104,20 +97,15 @@ class Router {
                 $this->_container->get("wp.query")
             );
 
-
-
             if($actionResult instanceof ActionResultInterface){
 
                 $actionResult->execute();
 
             }
 
-
-
-
-
         }
 
     }
+
 
 } 

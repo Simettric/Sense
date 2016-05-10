@@ -13,7 +13,7 @@ use Collections\Collection;
 class InterceptorCollection extends Collection{
 
     function __construct(){
-        parent::__construct("\\Simettric\\Sense\\Controller\\AbtractInterceptor");
+        parent::__construct("\\Simettric\\Sense\\Controller\\AbstractInterceptor");
     }
 
 } 
