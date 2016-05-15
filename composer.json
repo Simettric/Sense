@@ -3,7 +3,7 @@
     "description": "The Sense Framework for WordPress",
     "version": "2.0.0",
     "keywords": ["wordpress-plugin"],
-    "type":     "wordpress-plugin",
+    "type": "wordpress-plugin",
     "homepage": "http://simettric.com/sense",
     "license": "MIT",
     "authors": [
