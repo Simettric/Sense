@@ -18,7 +18,9 @@
         "symfony/dependency-injection": "^3.0",
         "symfony/config": "^3.0",
         "symfony/http-foundation": "^3.0",
-        "danielgsims/php-collections": "^1.4"
+        "danielgsims/php-collections": "^1.4",
+        "doctrine/common": "^2.6",
+        "symfony/finder": "^3.1"
     },
     "extra": {
         "installer-name": "wordpress-plugin"

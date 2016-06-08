@@ -19,10 +19,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class PluginManager {
 
 
-    /**
-     * @var bool
-     */
-    private $debug_mode;
 
 
     /**
@@ -39,27 +35,17 @@ class PluginManager {
 
 
 
-    private static $instance;
-
-
-    private function __construct(){
-        $this->debug_mode = WP_DEBUG;
+    function __construct(ContainerInterface $containerInterface){
+        $this->container  = $containerInterface;
         $this->plugins    = new Collection("Simettric\\Sense\\AbstractPlugin");
-        $this->container  = new ContainerBuilder();
-        $this->container->set("router.route_container", new RouteContainer());
-    }
-
-    public static function getInstance(){
-        if(!self::$instance){
-            self::$instance = new PluginManager();
-        }
-
-        return self::$instance;
     }
 
 
-    function register(AbstractPlugin $plugin, $file=null){
 
+
+    function register(AbstractPlugin $plugin, $file){
+
+        $plugin->setRootDir(dirname($file));
         $plugin->loadRoutes($this->container->get("router.route_container"));
 
         $this->plugins->add($plugin);
@@ -78,33 +64,8 @@ class PluginManager {
 
 
 
-    function registerHooks(){
-
-        add_action("plugins_loaded", array($this, "registerServices"));
-    }
-
-    function registerServices(){
-
-        $dirs = [];
-
-        /**
-         * @var $plugin AbstractPlugin
-         */
-        foreach($this->plugins as $plugin){
-
-            if(!is_array($plugin->getConfigLocations()))
-                throw new \Exception("getConfigLocations must to return an array in " . get_class($plugin));
-
-            foreach($plugin->getConfigLocations() as $dir){
-                $dirs[] = $dir;
-            }
-        }
-
-        if(count($dirs)){
-            $loader = new YamlFileLoader($this->container, new FileLocator($dirs));
-            $loader->load('services.yml');
-        }
-
+    function getPlugins(){
+        return $this->plugins;
     }
 
 

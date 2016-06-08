@@ -8,35 +8,91 @@
 namespace Simettric\Sense;
 
 
-use Simettric\Sense\Router\RouteContainer;
+use Collections\Collection;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Simettric\Sense\Router\RouteInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Finder\Finder;
 
 abstract class AbstractPlugin {
 
 
+    private $base_namespace = null;
+
     private $has_routes = false;
 
-    abstract function getConfigLocations();
+    private $rootDir = false;
 
-    abstract function getTemplateLocations();
+    function setRootDir($dir){
+        $this->rootDir = $dir;
+    }
+
+    function getConfigLocations(){
+        return [ $this->rootDir . "/Config"];
+    }
+
+    function getControllerLocations(){
+        return [ $this->rootDir . "/Controller"];
+    }
+
+    function getTemplateLocations(){
+        return [ $this->rootDir . "/View"];
+    }
 
     abstract function getName();
 
 
-    function loadRoutes(RouteContainer $routeContainer){
-        $locator = new FileLocator($this->getConfigLocations());
-        $routes = $locator->locate('routes.yml', null, false);
-        foreach($routes as $route){
-            $routeContainer->add(
-              $route["name"],
-              $route["path"],
-              $route["params"],
-              $route["methods"],
-              $route["requirements"]
-            );
+    function getBaseNamespace(){
+
+        if(!$this->base_namespace){
+            $ref = new \ReflectionObject($this);
+            $this->base_namespace = $ref->getNamespaceName();
+        }
+        return $this->base_namespace;
+    }
+
+    function loadRoutes(Collection $routeContainer){
+
+        AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
+
+        $finder = new Finder();
+        $finder->files()->in($this->getControllerLocations());
+        $files = $finder->files()->name('*Controller.php');
+
+        $this->has_routes = false;
+        foreach($files as $file){
+
+
+            $reader = new AnnotationReader();
+            $reflClass = new \ReflectionClass($file);
+            foreach($reflClass->getMethods() as $method) {
+
+                $classAnnotations = $reader->getMethodAnnotations($method);
+
+                /**
+                 * @var $routeInterface RouteInterface
+                 */
+                foreach ($classAnnotations as $routeInterface) {
+
+
+                    $routeInterface->setActionMethod($method->getName());
+                    $routeInterface->setControllerClassName($reflClass->getName());
+                    $routeInterface->configure();
+
+                    $routeContainer->add($routeInterface);
+
+                    if(!$this->has_routes){
+                        $this->has_routes = true;
+                    }
+
+                }
+            }
+
+
         }
 
-        $this->has_routes = (bool) count($routes);
+
     }
 
 

@@ -8,7 +8,10 @@
 namespace Simettric\Sense\Router;
 
 
+use Doctrine\Common\Collections\Collection;
+
 class UrlGenerator {
+
 
     /**
      * @var RouteContainer

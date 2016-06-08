@@ -8,6 +8,7 @@
 namespace Simettric\Sense\Router;
 
 
+use Collections\Collection;
 use Simettric\Sense\ActionResult\ActionResultInterface;
 use Simettric\Sense\ActionResult\WPTemplateActionResult;
 use Simettric\Sense\Traits\ArrayTrait;
@@ -22,10 +23,7 @@ class Router {
 
     public $controller_instance, $action_name;
 
-    /**
-     * @var RouteContainer
-     */
-    private $routeContainer;
+
 
     /**
      * @var Container
@@ -34,21 +32,23 @@ class Router {
 
     private $_already_matched = false;
 
-    function __construct(RouteContainer $routeContainer, Container $container){
+    function __construct(Container $container){
         $this->_container = $container;
-        $this->routeContainer = $routeContainer;
     }
 
 
     function registerRouteRules(){
 
         $extra = array();
-        foreach ($this->routeContainer->getRoutes() as $name=>$route) {
+        /**
+         * @var $route RouteInterface
+         */
+        foreach ($this->_container->get("router.route_container") as $route) {
 
 
-            \add_rewrite_rule($route["regexp"], $route["url"],'top');
+            \add_rewrite_rule($route->getRegExp(), $route->getUrl(),'top');
 
-            $params = array_merge($route["params"], array_keys($route["url_params"]));
+            $params = array_merge($route->getParams(), array_keys($route->getUrlParams()));
 
             foreach($params as $param){
                 $extra[$param] = $param;
@@ -82,10 +82,13 @@ class Router {
 
         $route_name = $this->getArrayValue("__route_name", $wp_query->query_vars);
 
+        $route      = $this->_container->get("router.route_container")->get($route_name);
+
+
         /**
-         * @var $route Route
+         * @var $route RouteInterface
          */
-        if( $route = $this->routeContainer->get($route_name) ){
+        if( $route ){
 
             $this->_already_matched = true;
 
@@ -106,14 +109,14 @@ class Router {
     }
 
     /**
-     * @param Route $route
+     * @param RouteInterface $route
      * @return ActionResultInterface
      * @throws \Exception
      */
-    function executeControllerAction(Route $route){
+    function executeControllerAction(RouteInterface $route){
 
         $controller_name = $route->getControllerClassName();
-        $action_name     = $route->getActionName();
+        $action_name     = $route->getActionMethod();
         return call_user_func(
                     [new $controller_name($this->_container), $action_name],
                     $this->_container->get("request"),
