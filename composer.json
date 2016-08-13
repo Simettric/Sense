@@ -2,8 +2,7 @@
     "name": "simettric/sense",
     "description": "The Sense Framework for WordPress",
     "version": "2.0.0",
-    "keywords": ["wordpress-plugin"],
-    "type": "wordpress-plugin",
+    "keywords": ["wordpress-framework"],
     "homepage": "http://simettric.com/sense",
     "license": "MIT",
     "authors": [
@@ -21,9 +20,6 @@
         "danielgsims/php-collections": "^1.4",
         "doctrine/common": "^2.6",
         "symfony/finder": "^3.1"
-    },
-    "extra": {
-        "installer-name": "wordpress-plugin"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
