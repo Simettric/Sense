@@ -24,7 +24,8 @@ abstract class AbstractController extends AbstractBaseController {
         }
 
         return new WPTemplateActionResult(
-            $this->container->getParameter("view_dir") . "/View/" .$template
+            $template,
+	        $this->plugin->getTemplateLocations()
         );
     }
 

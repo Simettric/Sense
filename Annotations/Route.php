@@ -6,6 +6,7 @@
  */
 
 namespace Simettric\Sense\Annotations;
+use Simettric\Sense\AbstractPlugin;
 use Simettric\Sense\Router\RouteInterface;
 
 /**
@@ -36,6 +37,11 @@ class Route implements RouteInterface{
 
     public $controller_method;
 
+	/**
+	 * @var AbstractPlugin
+	 */
+	public $plugin;
+
 
 
 
@@ -51,10 +57,20 @@ class Route implements RouteInterface{
             }
             $this->$key = $value;
         }
+
     }
 
     function configure(){
 
+	    $this->params["__route_name"] = $this->name;
+
+	    if(0===strpos($this->path, "/")){
+		    $this->path = substr($this->path, 1, strlen($this->path));
+	    }
+
+	    if((strlen($this->path)-1)===strrpos($this->path, "/")){
+		    $this->path = substr($this->path, 0, strlen($this->path)-1);
+	    }
 
         \preg_match_all('({\w+})', $this->path, $found_params);
         $found_params = isset($found_params[0]) && is_array($found_params[0]) ? $found_params[0] : array();
@@ -68,12 +84,13 @@ class Route implements RouteInterface{
             $this->url_params[$_key] = '$matches['.($i+1).']';
         }
 
-        $this->regexp = '^' . $regexp . "$" ;
+        $this->regexp =  $regexp . "/?$" ;
 
         $params = array_merge($this->params, $this->url_params);
 
         $url = "index.php?" . http_build_query($params, '', "&");
         $this->url = urldecode($url);
+
 
     }
 
@@ -123,7 +140,11 @@ class Route implements RouteInterface{
     }
 
 
+	function getPlugin() {
+		return $this->plugin;
+	}
 
-
-
+	function setPlugin( AbstractPlugin $plugin ) {
+		$this->plugin = $plugin;
+	}
 }

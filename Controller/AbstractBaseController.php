@@ -8,6 +8,7 @@
 namespace Simettric\Sense\Controller;
 
 
+use Simettric\Sense\AbstractPlugin;
 use Symfony\Component\DependencyInjection\Container;
 
 abstract class AbstractBaseController {
@@ -17,9 +18,15 @@ abstract class AbstractBaseController {
 	 */
 	protected $container;
 
+	/**
+	 * @var AbstractPlugin
+	 */
+	protected $plugin;
 
-	function __construct(Container $container){
+
+	function __construct(Container $container, AbstractPlugin $plugin=null){
 		$this->container = $container;
+		$this->plugin = $plugin;
 	}
 
 	function get($key){

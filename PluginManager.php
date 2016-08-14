@@ -26,19 +26,17 @@ class PluginManager {
      */
     private $plugins;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
 
 
 
 
-    function __construct(ContainerInterface $containerInterface){
-        $this->container  = $containerInterface;
+
+    function __construct(){
+
         $this->plugins    = new Collection("Simettric\\Sense\\AbstractPlugin");
     }
+
 
 
 

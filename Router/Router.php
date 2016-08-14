@@ -39,28 +39,32 @@ class Router {
     function registerRouteRules(){
 
         $extra = array();
+
         /**
          * @var $route RouteInterface
          */
         foreach ($this->_container->get("router.route_container") as $route) {
 
+	        $params = array_merge(array_keys($route->getParams()), array_keys($route->getUrlParams()));
 
-            \add_rewrite_rule($route->getRegExp(), $route->getUrl(),'top');
+	        foreach ($params as $param) {
+		        add_rewrite_tag('%' .$param. '%', '([^&]+)');
+	        }
 
-            $params = array_merge($route->getParams(), array_keys($route->getUrlParams()));
-
-            foreach($params as $param){
-                $extra[$param] = $param;
-            }
+            \add_rewrite_rule($route->getRegExp(), $route->getUrl(), 'top');
 
         }
 
 
+
         \add_filter("query_vars", function($qvars) use ($extra){
-            $qvars[] = "__route_name";
+
+
             foreach ($extra as $param) {
                 $qvars[] = $param;
             }
+
+
 
             return $qvars;
         });
@@ -72,12 +76,13 @@ class Router {
     function match(){
 
 
+
+
         global $wp_query;
 
         \remove_action("parse_query", array($this, "match"));
 
         if(!$wp_query->is_main_query() || $this->_already_matched) return;
-
 
         $route_name = $this->getArrayValue("__route_name", $wp_query->query_vars);
 
@@ -107,6 +112,10 @@ class Router {
 
     }
 
+    function regenerateWPRouteCache(){
+    	flush_rewrite_rules(true);
+    }
+
     /**
      * @param RouteInterface $route
      * @return ActionResultInterface
@@ -116,8 +125,9 @@ class Router {
 
         $controller_name = $route->getControllerClassName();
         $action_name     = $route->getActionMethod();
+
         return call_user_func(
-                    [new $controller_name($this->_container), $action_name],
+                    [new $controller_name($this->_container, $route->getPlugin()), $action_name],
                     $this->_container->get("request"),
                     $this->_container->get("wp.query")
         );

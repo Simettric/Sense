@@ -13,8 +13,11 @@ class WPTemplateActionResult implements  ActionResultInterface  {
 
     private $template_file;
 
-    function __construct($template_file){
+	private $locations;
+
+    function __construct($template_file, $template_locations=array()){
         $this->template_file = $template_file;
+	    $this->locations = $template_locations;
     }
 
 
@@ -29,9 +32,14 @@ class WPTemplateActionResult implements  ActionResultInterface  {
     function templateInclude(){
         global $template;
 
-        if(file_exists($this->template_file)){
-            return $this->template_file;
-        }
+	    foreach ($this->locations as $dir) {
+			$file = $dir . DIRECTORY_SEPARATOR . $this->template_file;
+
+		    if(file_exists($file)){
+			    return $file;
+		    }
+
+	    }
 
         return $template;
     }

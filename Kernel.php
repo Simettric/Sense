@@ -8,9 +8,16 @@
 namespace Simettric\Sense;
 
 
+use Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator;
 use Simettric\Sense\Router\RouteContainer;
 use Simettric\Sense\Router\Router;
+use Simettric\Sense\View\View;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\Request;
 
 class Kernel {
 
@@ -33,19 +40,10 @@ class Kernel {
 
 		$this->container = new ContainerBuilder();
 
-		$this->container->setParameter('debug_mode', WP_DEBUG);
+		$loader = new YamlFileLoader($this->container, new FileLocator([__DIR__ . "/Config"]));
+		$loader->load('services.yml');
 
-		$this->container
-			 ->register('plugin_manager', PluginManager::class)
-		     ->addArgument($this->container);
-
-		$this->container->register('router.route_container', RouteContainer::class);
-
-		$this->container
-			 ->register('router', Router::class)
-			 ->addArgument($this->container);
-
-		$this->initSubscribers();
+		$this->initCoreSubscribers();
 	}
 
 	static function getInstance() {
@@ -55,12 +53,14 @@ class Kernel {
 		return self::$instance;
 	}
 
-	function initSubscribers() {
+	function initCoreSubscribers() {
 
 		add_action( 'muplugins_loaded', array($this, 'onMuPluginsLoaded'));
 		add_action( 'plugins_loaded', array($this, 'onPluginsLoaded'));
 		add_action( 'after_setup_theme', array($this, 'onAfterSetupTheme'));
+
 		add_action( 'parse_query', array($this->container->get("router"), "match"));
+		add_action( 'init' , array($this, 'onInit'));
 
 	}
 
@@ -73,15 +73,14 @@ class Kernel {
 		if(!$this->initialized)
 			$this->initialized = true;
 
-		$this->registerServices();
-
-		$this->registerRoutes();
-
 		$this->loadPluggableFunctions();
 
 	}
 
+
+
 	function onAfterSetupTheme(){
+
 		if(!$this->initialized){
 
 			$notice = "You need to activate almost one plugin using Sense in order to use it in a Theme";
@@ -99,6 +98,19 @@ class Kernel {
 				});
 			}
 		}
+
+		$this->registerServices();
+
+		$this->registerRoutes();
+	}
+
+	function onInit(){
+		$this->container->get("router")->registerRouteRules();
+
+
+		if($this->container->getParameter("debug_mode")){
+			$this->container->get("router")->regenerateWPRouteCache();
+		}
 	}
 
 	function loadPluggableFunctions(){
@@ -114,6 +126,14 @@ class Kernel {
 
 	function registerServices(){
 
+
+
+		$this->container->setParameter('debug_mode', WP_DEBUG);
+
+		global $wp_query;
+		$this->container->set('wp.query', $wp_query);
+
+
 		/**
 		 * @var $plugin AbstractPlugin
 		 */
@@ -121,6 +141,8 @@ class Kernel {
 
 			$plugin->registerServices($this->container);
 		}
+
+		$this->container->compile();
 
 	}
 
@@ -133,6 +155,9 @@ class Kernel {
 
 			$plugin->registerRoutes($this->container->get("router.route_container"));
 		}
+
+
+
 
 	}
 	/**

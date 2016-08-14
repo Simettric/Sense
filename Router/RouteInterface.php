@@ -8,6 +8,8 @@
 namespace Simettric\Sense\Router;
 
 
+use Simettric\Sense\AbstractPlugin;
+
 interface RouteInterface {
 
     function configure();
@@ -26,10 +28,24 @@ interface RouteInterface {
 
     function getControllerClassName();
 
+	function setControllerClassName($class_name);
+
     function getActionMethod();
 
-    function setControllerClassName($class_name);
-
     function setActionMethod($method_name);
+
+	/**
+	 * @return AbstractPlugin
+	 */
+	function getPlugin();
+
+	/**
+	 * @param AbstractPlugin $plugin
+	 *
+	 * @return void
+	 */
+	function setPlugin(AbstractPlugin $plugin);
+
+
 
 } 

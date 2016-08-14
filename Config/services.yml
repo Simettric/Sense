@@ -1,0 +1,30 @@
+parameters:
+
+  router.url_absolute_generator_class: Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator
+
+services:
+
+  plugin_manager:
+    class: Simettric\Sense\PluginManager
+
+  router:
+    class: Simettric\Sense\Router\Router
+    arguments: ["@service_container"]
+
+  router.absolute_url_generator:
+    class: %router.url_absolute_generator_class%
+
+  router.route_container:
+    class: Simettric\Sense\Router\RouteContainer
+
+  url_generator:
+    class: Simettric\Sense\Router\UrlGenerator
+    arguments: ["@router.route_container", "@router.absolute_url_generator"]
+
+  view:
+    class: Simettric\Sense\View\View
+    arguments: ["@url_generator"]
+
+  request:
+    class: Symfony\Component\HttpFoundation\Request
+    factory: [Symfony\Component\HttpFoundation\Request, 'createFromGlobals']
