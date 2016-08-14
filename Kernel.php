@@ -10,7 +10,6 @@ namespace Simettric\Sense;
 
 use Simettric\Sense\Router\RouteContainer;
 use Simettric\Sense\Router\Router;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Kernel {
@@ -71,13 +70,14 @@ class Kernel {
 
 	function onPluginsLoaded (){
 
+		if(!$this->initialized)
+			$this->initialized = true;
+
 		$this->registerServices();
 
 		$this->registerRoutes();
 
 		$this->loadPluggableFunctions();
-
-		$this->container->get("router")->init();
 
 	}
 
@@ -85,14 +85,15 @@ class Kernel {
 		if(!$this->initialized){
 
 			$notice = "You need to activate almost one plugin using Sense in order to use it in a Theme";
-			if(!is_admin()) {
+			if(!is_admin() && $GLOBALS['pagenow'] != 'wp-login.php') {
+
 				wp_die($notice, "Sense Error");
 
 			}else{
 				add_action( 'admin_notices', function () use ($notice) {
 					?>
 					<div class="notice notice-success is-dismissible">
-						<p><?php echo $notice; ?></p>
+						<p><strong>Sense Framework</strong>: <?php echo $notice; ?></p>
 					</div>
 					<?php
 				});

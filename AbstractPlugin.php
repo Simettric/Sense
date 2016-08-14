@@ -56,7 +56,9 @@ abstract class AbstractPlugin {
 
     function registerRoutes(Collection $routeContainer){
 
-        AnnotationRegistry::registerFile(__DIR__ . "/Annotations/Route.php");
+        if(!count($this->getControllerLocations())) return;
+
+    	AnnotationRegistry::registerFile(__DIR__ . "/Annotations/Route.php");
 
         $finder = new Finder();
         $finder->files()->in($this->getControllerLocations());
