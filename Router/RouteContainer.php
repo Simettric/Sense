@@ -17,7 +17,7 @@ class RouteContainer extends Collection{
     }
 
     function get($name){
-        return $this->find(function($route) use ($name){
+        return $this->find(function(RouteInterface $route) use ($name){
                 return $route->getName() == $name;
         });
     }

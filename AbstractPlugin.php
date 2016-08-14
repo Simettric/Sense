@@ -13,6 +13,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Simettric\Sense\Router\RouteInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Finder\Finder;
 
 abstract class AbstractPlugin {
@@ -33,7 +35,7 @@ abstract class AbstractPlugin {
     }
 
     function getControllerLocations(){
-        return [ $this->rootDir . "/Controller"];
+        return [ $this->rootDir . "/Controller" ];
     }
 
     function getTemplateLocations(){
@@ -52,9 +54,9 @@ abstract class AbstractPlugin {
         return $this->base_namespace;
     }
 
-    function loadRoutes(Collection $routeContainer){
+    function registerRoutes(Collection $routeContainer){
 
-        AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
+        AnnotationRegistry::registerFile(__DIR__ . "/Annotations/Route.php");
 
         $finder = new Finder();
         $finder->files()->in($this->getControllerLocations());
@@ -95,7 +97,24 @@ abstract class AbstractPlugin {
 
     }
 
+    function registerServices(ContainerInterface $container) {
 
+	    if(count($this->getConfigLocations())){
+		    $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
+		    $loader->load('services.yml');
+	    }
+
+    }
+
+	/**
+	 * You can overwrite this function if you have implemented any pluggable functions
+	 * https://codex.wordpress.org/Pluggable_Functions
+	 *
+	 * Note: Themes can´t implement pluggable functions
+	 */
+	function registerPluggableFunctions() {
+		if($this->isTheme()) return;
+	}
 
 
     function isTheme(){

@@ -36,7 +36,6 @@ class Router {
         $this->_container = $container;
     }
 
-
     function registerRouteRules(){
 
         $extra = array();

@@ -45,9 +45,6 @@ class PluginManager {
 
     function register(AbstractPlugin $plugin, $file){
 
-        $plugin->setRootDir(dirname($file));
-        $plugin->loadRoutes($this->container->get("router.route_container"));
-
         $this->plugins->add($plugin);
 
         if($plugin->isTheme()){

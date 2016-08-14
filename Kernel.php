@@ -1,94 +1,147 @@
 <?php
 /**
  * Created by Asier Marqués <asiermarques@gmail.com>
- * Date: 8/6/16
- * Time: 13:40
+ * Date: 13/8/16
+ * Time: 19:11
  */
 
 namespace Simettric\Sense;
 
 
-use Collections\Collection;
 use Simettric\Sense\Router\RouteContainer;
-use Symfony\Component\Config\FileLocator;
+use Simettric\Sense\Router\Router;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Kernel {
 
+	private static $instance=null;
 
-    /**
-     * @var ContainerBuilder
-     */
-    private $container;
+	/**
+	 * This controls if Sense Kernel has been initialized
+	 * It´s useful when you are using a theme witch uses Sense but
+	 * there is not any plugin that initializes Sense
+	 * @var bool
+	 */
+	private $initialized=false;
 
-    /**
-     * @var PluginManager
-     */
-    private $plugin_manager;
+	/**
+	 * @var ContainerBuilder
+	 */
+	private $container;
 
-    /**
-     * @var $this
-     */
-    private static $instance;
+	private function __construct() {
 
-    private function __construct(){
+		$this->container = new ContainerBuilder();
+
+		$this->container->setParameter('debug_mode', WP_DEBUG);
+
+		$this->container
+			 ->register('plugin_manager', PluginManager::class)
+		     ->addArgument($this->container);
+
+		$this->container->register('router.route_container', RouteContainer::class);
+
+		$this->container
+			 ->register('router', Router::class)
+			 ->addArgument($this->container);
+
+		$this->initSubscribers();
+	}
+
+	static function getInstance() {
+		if(!self::$instance) {
+			self::$instance = new Kernel();
+		}
+		return self::$instance;
+	}
+
+	function initSubscribers() {
+
+		add_action( 'muplugins_loaded', array($this, 'onMuPluginsLoaded'));
+		add_action( 'plugins_loaded', array($this, 'onPluginsLoaded'));
+		add_action( 'after_setup_theme', array($this, 'onAfterSetupTheme'));
+		add_action( 'parse_query', array($this->container->get("router"), "match"));
+
+	}
+
+	function onMuPluginsLoaded() {
+		$this->initialized = true;
+	}
+
+	function onPluginsLoaded (){
+
+		$this->registerServices();
+
+		$this->registerRoutes();
+
+		$this->loadPluggableFunctions();
+
+		$this->container->get("router")->init();
+
+	}
+
+	function onAfterSetupTheme(){
+		if(!$this->initialized){
+
+			$notice = "You need to activate almost one plugin using Sense in order to use it in a Theme";
+			if(!is_admin()) {
+				wp_die($notice, "Sense Error");
+
+			}else{
+				add_action( 'admin_notices', function () use ($notice) {
+					?>
+					<div class="notice notice-success is-dismissible">
+						<p><?php echo $notice; ?></p>
+					</div>
+					<?php
+				});
+			}
+		}
+	}
+
+	function loadPluggableFunctions(){
+
+		/**
+		 * @var $plugin AbstractPlugin
+		 */
+		foreach($this->container->get("plugin_manager")->getPlugins() as $plugin){
+
+			if(!$plugin->isTheme()) $plugin->registerPluggableFunctions();
+		}
+	}
+
+	function registerServices(){
+
+		/**
+		 * @var $plugin AbstractPlugin
+		 */
+		foreach($this->container->get("plugin_manager")->getPlugins() as $plugin){
+
+			$plugin->registerServices($this->container);
+		}
+
+	}
+
+	function registerRoutes(){
+
+		/**
+		 * @var $plugin AbstractPlugin
+		 */
+		foreach($this->container->get("plugin_manager")->getPlugins() as $plugin){
+
+			$plugin->registerRoutes($this->container->get("router.route_container"));
+		}
+
+	}
+	/**
+	 * @return ContainerBuilder
+	 */
+	function getContainer(){
+		return $this->container;
+	}
 
 
-        $this->container  = new ContainerBuilder();
-        $this->container->set("router.route_container", new RouteContainer());
-        $this->container->setParameter("app.debug", WP_DEBUG);
 
-        $this->plugin_manager = new PluginManager($this->container);
+}
 
-
-        $this->registerHooks();
-
-    }
-
-    static function getInstance(){
-        if(!self::$instance){
-            self::$instance = new Kernel();
-        }
-        return self::$instance;
-    }
-
-
-    function getPluginManager(){
-        return $this->plugin_manager;
-    }
-
-
-    function registerHooks(){
-
-        add_action("plugins_loaded", array($this, "registerServices"));
-
-    }
-
-
-
-    function registerServices(){
-
-        $dirs = [];
-
-        /**
-         * @var $plugin AbstractPlugin
-         */
-        foreach($this->plugin_manager->getPlugins() as $plugin){
-
-            if(!is_array($plugin->getConfigLocations()))
-                throw new \Exception("getConfigLocations must to return an array in " . get_class($plugin));
-
-            foreach($plugin->getConfigLocations() as $dir){
-                $dirs[] = $dir;
-            }
-        }
-
-        if(count($dirs)){
-            $loader = new YamlFileLoader($this->container, new FileLocator($dirs));
-            $loader->load('services.yml');
-        }
-
-    }
-
-} 
