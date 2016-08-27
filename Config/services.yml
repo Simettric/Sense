@@ -1,12 +1,11 @@
 parameters:
-
   router.url_absolute_generator_class: Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator
 
 services:
 
   plugin_manager:
     class: Simettric\Sense\PluginManager
-
+    arguments: ["%sense.plugins_order%"]
   router:
     class: Simettric\Sense\Router\Router
     arguments: ["@service_container"]

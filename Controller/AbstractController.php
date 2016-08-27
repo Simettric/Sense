@@ -54,7 +54,21 @@ abstract class AbstractController extends AbstractBaseController {
         $result->setResponse($response);
 
         return $result;
+    }
 
+    function setTitle($title) {
+
+        add_filter( 'wp_title', function () use($title) { return $title; }, 10, 2 );
+    }
+
+    function setDescription($description) {
+
+        add_filter('bloginfo',function($info, $show) use($description) {
+            if ($show == 'description') {
+                return $description;
+            }
+            return $info;
+        },10,2);
     }
 
 

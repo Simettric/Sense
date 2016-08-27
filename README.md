@@ -11,8 +11,7 @@ Sense is a MVC Framework designed to build complex websites and web applications
 
     
     class TestController extends AbstractController{
-         
-   
+        
         /**
          * @Route("/profile/{name_slug}", name="profile_detail")
          */
@@ -30,10 +29,10 @@ Sense is a MVC Framework designed to build complex websites and web applications
     }
     
 **YOUR VIEW**
-
+    
+    //your-plugin-path/Views/User/profile.php     
     <?php
-        //your-plugin-path/Views/User/profile.php
-     
+    
         get_header();
         
         $user = senseView()->get("user");

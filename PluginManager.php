@@ -27,11 +27,6 @@ class PluginManager {
     private $plugins;
 
 
-
-
-
-
-
     function __construct(){
 
         $this->plugins    = new Collection("Simettric\\Sense\\AbstractPlugin");
