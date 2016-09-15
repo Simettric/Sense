@@ -5,22 +5,22 @@
  * Time: 19:11
  */
 
-namespace Simettric\Sense;
+namespace Simettric\Sense
+{
 
+	use Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator;
+	use Simettric\Sense\Router\RouteContainer;
+	use Simettric\Sense\Router\Router;
+	use Simettric\Sense\View\View;
+	use Symfony\Component\Config\Definition\Exception\Exception;
+	use Symfony\Component\Config\FileLocator;
+	use Symfony\Component\DependencyInjection\ContainerBuilder;
+	use Symfony\Component\DependencyInjection\Definition;
+	use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+	use Symfony\Component\DependencyInjection\Reference;
+	use Symfony\Component\HttpFoundation\Request;
 
-use Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator;
-use Simettric\Sense\Router\RouteContainer;
-use Simettric\Sense\Router\Router;
-use Simettric\Sense\View\View;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpFoundation\Request;
-
-class Kernel {
+	class Kernel {
 
 
 	/**
@@ -65,7 +65,9 @@ class Kernel {
 	 */
 	static function getInstance() {
 		if(!self::$instance) {
-			self::$instance = new Kernel(self::$configParams);
+			self::$instance = new Kernel(array_merge(self::$configParams, array(
+				"plugins_order" => array()
+			)));
 		}
 		return self::$instance;
 	}
@@ -75,9 +77,7 @@ class Kernel {
 	 *
 	 */
 	static function configure($config_params=array()){
-		self::$configParams = array_merge($config_params, array(
-			"plugins_order" => array()
-		));
+		self::$configParams = $config_params;
 	}
 
 	function initCoreSubscribers() {
@@ -197,6 +197,21 @@ class Kernel {
 	}
 
 
-
+}
 }
 
+namespace
+{
+
+	function sense_view()
+	{
+		return Simettric\Sense\Kernel::getInstance()->getContainer()->get("view");
+	}
+
+	function sense_url($route_name, $params=[], $absolute=false)
+	{
+
+		$generator = Simettric\Sense\Kernel::getInstance()->getContainer()->get("url_generator");
+		return $generator->generateUrl($route_name, $params, $absolute);
+	}
+}

@@ -6,6 +6,7 @@ services:
   plugin_manager:
     class: Simettric\Sense\PluginManager
     arguments: ["%sense.plugins_order%"]
+
   router:
     class: Simettric\Sense\Router\Router
     arguments: ["@service_container"]
