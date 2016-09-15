@@ -22,6 +22,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Kernel {
 
+
+	/**
+	 * @var array
+	 */
+	private static $configParams=array();
+
+	/**
+	 * @var Kernel
+	 */
 	private static $instance=null;
 
 	/**
@@ -51,30 +60,34 @@ class Kernel {
 		$this->initCoreSubscribers();
 	}
 
+	/**
+	 * @return Kernel
+	 */
 	static function getInstance() {
 		if(!self::$instance) {
-			throw new Exception("You need to initialize the Sense Kernel in wp_config.php ");
+			self::$instance = new Kernel(self::$configParams);
 		}
 		return self::$instance;
 	}
 
-	static function init($config_params=array()){
-		if(self::$instance) {
-			throw new Exception("You only can initialize the Sense Kernel once. It must be in wp_config.php");
-		}
-		self::$instance = new Kernel(array_merge($config_params, array(
+	/**
+	 * @param array $config_params
+	 *
+	 */
+	static function configure($config_params=array()){
+		self::$configParams = array_merge($config_params, array(
 			"plugins_order" => array()
-		)));
+		));
 	}
 
 	function initCoreSubscribers() {
 
-		add_action( 'muplugins_loaded', array($this, 'onMuPluginsLoaded'));
-		add_action( 'plugins_loaded', array($this, 'onPluginsLoaded'));
-		add_action( 'after_setup_theme', array($this, 'onAfterSetupTheme'));
+		\add_action( 'muplugins_loaded', array($this, 'onMuPluginsLoaded'));
+		\add_action( 'plugins_loaded', array($this, 'onPluginsLoaded'));
+		\add_action( 'after_setup_theme', array($this, 'onAfterSetupTheme'));
 
-		add_action( 'parse_query', array($this->container->get("router"), "match"));
-		add_action( 'init' , array($this, 'onInit'));
+		\add_action( 'parse_query', array($this->container->get("router"), "match"));
+		\add_action( 'init' , array($this, 'onInit'));
 
 	}
 
@@ -174,6 +187,8 @@ class Kernel {
 
 
 	}
+
+
 	/**
 	 * @return ContainerBuilder
 	 */
