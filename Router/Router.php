@@ -14,6 +14,7 @@ use Simettric\Sense\ActionResult\WPTemplateActionResult;
 use Simettric\Sense\Traits\ArrayTrait;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Router {
@@ -126,10 +127,27 @@ class Router {
         $controller_name = $route->getControllerClassName();
         $action_name     = $route->getActionMethod();
 
+
+        /**
+         * @var $request Request
+         */
+        $request = $this->_container->get("request");
+
+        /**
+         * @var $wp_query \WP_Query
+         */
+        $wp_query = $this->_container->get("wp.query");
+
+
+        foreach ($route->getUrlParams() as $param_name=>$param_match)
+        {
+            $request->attributes->set($param_name, $wp_query->query_vars[$param_name]);
+        }
+
         return call_user_func(
                     [new $controller_name($this->_container, $route->getPlugin()), $action_name],
-                    $this->_container->get("request"),
-                    $this->_container->get("wp.query")
+                    $request,
+                    $wp_query
         );
 
     }

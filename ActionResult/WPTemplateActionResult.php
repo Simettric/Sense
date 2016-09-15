@@ -22,6 +22,7 @@ class WPTemplateActionResult implements  ActionResultInterface  {
 
 
     function execute(){
+
         \add_filter('template_include', array($this, "templateInclude"));
     }
 
@@ -32,10 +33,12 @@ class WPTemplateActionResult implements  ActionResultInterface  {
     function templateInclude(){
         global $template;
 
+
 	    foreach ($this->locations as $dir) {
 			$file = $dir . DIRECTORY_SEPARATOR . $this->template_file;
 
 		    if(file_exists($file)){
+                status_header( '200' );
 			    return $file;
 		    }
 
