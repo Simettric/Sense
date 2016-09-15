@@ -138,11 +138,16 @@ class Router {
          */
         $wp_query = $this->_container->get("wp.query");
 
-
-        foreach ($route->getUrlParams() as $param_name=>$param_match)
+        if($request)
         {
-            $request->attributes->set($param_name, $wp_query->query_vars[$param_name]);
+            foreach ($route->getUrlParams() as $param_name=>$param_match)
+            {
+                $request->attributes->set($param_name, $wp_query->query_vars[$param_name]);
+            }
         }
+
+
+
 
         return call_user_func(
                     [new $controller_name($this->_container, $route->getPlugin()), $action_name],
