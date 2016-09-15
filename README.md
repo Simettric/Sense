@@ -35,7 +35,7 @@ Sense is a MVC Framework designed to build complex websites and web applications
     
         get_header();
         
-        $user = senseView()->get("user");
+        $user = sense_view()->get("user");
     ?>
      
     <h1><?php echo $user->getName() ?></h1>
