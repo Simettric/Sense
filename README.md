@@ -9,41 +9,42 @@ Sense is a MVC Framework designed to build complex websites and web applications
 
 **YOUR CONTROLLER**
 
-    
-    class TestController extends AbstractController{
+```php
+class TestController extends AbstractController{
         
-        /**
-         * @Route("/profile/{name_slug}", name="profile_detail")
-         */
-        function demoAction($name_slug, \WP_Query $wp_query, \Request $request) {
+   /**
+     * @Route("/profile/{name_slug}", name="profile_detail")
+     */
+    function demoAction($name_slug, \WP_Query $wp_query, \Request $request) {
              
-            $repository = $this->get("repository.user");
-            $user = $repository->findBy("username", $name_slug);
+        $repository = $this->get("repository.user");
+        $user = $repository->findBy("username", $name_slug);
              
-            return $this->resultTemplate('User/profile.php', array(
-                "user" => $user
-            ));
-       
-        }
-   
+        return $this->resultTemplate('User/profile.php', array(
+            "user" => $user
+        ));
     }
+}
+```
     
 **YOUR VIEW**
-    
-    //your-plugin-path/Views/User/profile.php     
-    <?php
-    
-        get_header();
+
+```php
+<?php
+//your-plugin-path/Views/User/profile.php     
+
+    get_header();
         
-        $user = sense_view()->get("user");
-    ?>
+    $user = sense_view()->get("user");
+?>
      
-    <h1><?php echo $user->getName() ?></h1>
+<h1><?php echo $user->getName() ?></h1>
      
-    <?php
+<?php
     
-        get_footer();
-    
+    get_footer();
+```
+
 (Yes, you can use Twig if you want too ;)
     
 ### [Read the documentation](http://sense.readthedocs.io/en/latest/) 
