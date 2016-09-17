@@ -30,9 +30,9 @@ class TestController extends AbstractController{
 **YOUR VIEW**
 
 ```php
-//your-plugin-path/Views/User/profile.php     
 <?php
-    
+//your-plugin-path/Views/User/profile.php     
+
     get_header();
         
     $user = sense_view()->get("user");
