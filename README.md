@@ -9,7 +9,7 @@ Sense is a MVC Framework designed to build complex websites and web applications
 
 **YOUR CONTROLLER**
 
-    
+    ```php
     class TestController extends AbstractController{
         
         /**
@@ -27,9 +27,11 @@ Sense is a MVC Framework designed to build complex websites and web applications
         }
    
     }
+    ```
     
 **YOUR VIEW**
-    
+
+    ```php
     //your-plugin-path/Views/User/profile.php     
     <?php
     
@@ -43,7 +45,8 @@ Sense is a MVC Framework designed to build complex websites and web applications
     <?php
     
         get_footer();
-    
+    ```
+
 (Yes, you can use Twig if you want too ;)
     
 ### [Read the documentation](http://sense.readthedocs.io/en/latest/) 
