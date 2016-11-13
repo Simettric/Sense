@@ -1,3 +1,5 @@
+exclude_patterns:
+    - helpers.php
 rules:
     php.use_exit_function:
         enabled: true
