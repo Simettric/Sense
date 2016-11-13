@@ -11,7 +11,7 @@ namespace Simettric\Sense\Traits;
 trait ArrayTrait
 {
 
-	function getArrayValue($key, array $array, $default=null)
+	public function getArrayValue($key, array $array, $default=null)
     {
 		if(isset($array[$key])){
 			return $array[$key];
