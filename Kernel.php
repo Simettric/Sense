@@ -5,8 +5,7 @@
  * Time: 19:11
  */
 
-namespace Simettric\Sense
-{
+namespace Simettric\Sense;
 
 	use Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator;
 	use Simettric\Sense\Router\RouteContainer;
@@ -20,7 +19,7 @@ namespace Simettric\Sense
 	use Symfony\Component\DependencyInjection\Reference;
 	use Symfony\Component\HttpFoundation\Request;
 
-	class Kernel {
+class Kernel {
 
 
 	/**
@@ -197,21 +196,4 @@ namespace Simettric\Sense
 	}
 
 
-}
-}
-
-namespace
-{
-
-	function sense_view()
-	{
-		return Simettric\Sense\Kernel::getInstance()->getContainer()->get("view");
-	}
-
-	function sense_url($route_name, $params=[], $absolute=false)
-	{
-
-		$generator = Simettric\Sense\Kernel::getInstance()->getContainer()->get("url_generator");
-		return $generator->generateUrl($route_name, $params, $absolute);
-	}
 }

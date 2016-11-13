@@ -77,10 +77,8 @@ class Router
 
     }
 
-    public  function match()
+    public  function match(\WP_Query $wp_query)
     {
-
-        global $wp_query;
 
         \remove_action("parse_query", array($this, "match"));
 
