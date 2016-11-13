@@ -11,13 +11,14 @@ namespace Simettric\Sense\Tests\Router;
 use Simettric\Sense\Controller\AbstractController;
 use Simettric\Sense\Annotations\Route;
 
-class DummyController extends AbstractController{
+class DummyController extends AbstractController
+{
 
     /**
      * @Route("/{test_route}", name="test_route")
      */
-    function fakeAction(){
+    public function fakeAction(){
         return $this->resultResponse("test");
     }
 
-} 
+}

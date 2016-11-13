@@ -14,7 +14,8 @@ use Simettric\Sense\Annotations\Route;
 use Simettric\Sense\Router\RouteContainer;
 use Simettric\Sense\Router\UrlGenerator;
 
-class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
+class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
+{
 
 
     /**
@@ -29,7 +30,8 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
 
     private $controller_dummy = "\\Simettric\\Sense:Tests:Router:Dummy:index";
 
-    function setUp(){
+    public function setUp()
+    {
 
         $this->route_container = new RouteContainer();
 
@@ -43,7 +45,8 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
 
 
 
-    function testGenerateUrl(){
+    public function testGenerateUrl()
+    {
 
         $route = new Route();
         $route->name = "test_path";
@@ -68,7 +71,8 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
     /**
      * @expectedException \Exception
      */
-    function testGenerateUrlWithoutParams(){
+    public function testGenerateUrlWithoutParams()
+    {
 
         $route2 = new Route();
         $route2->name = "test_params";
@@ -80,7 +84,8 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
 
     }
 
-    function testGenerateAbsoluteUrl(){
+    public function testGenerateAbsoluteUrl()
+    {
 
         $route = new Route();
         $route->name = "test_path";
@@ -98,7 +103,4 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase {
     }
 
 
-
-
 }
- 

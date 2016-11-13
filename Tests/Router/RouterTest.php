@@ -16,10 +16,13 @@ use Simettric\Sense\Router\RouteContainer;
 use Simettric\Sense\Router\Router;
 use Symfony\Component\DependencyInjection\Container;
 
-class RouterTest extends \PHPUnit_Framework_TestCase {
+class RouterTest extends \PHPUnit_Framework_TestCase
+{
 
 
-    function getRoute(){
+    public function getRoute()
+    {
+
         AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
         $reader = new AnnotationReader();
         $reflClass = new \ReflectionClass("Simettric\\Sense\\Tests\\Router\\DummyController");
@@ -41,7 +44,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         return $route;
     }
 
-    function testExecuteController(){
+    public function testExecuteController()
+    {
 
         $di_container = $this->getMockBuilder(Container::class)->getMock();
         $di_container->expects($this->any())
@@ -60,4 +64,3 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
     }
 
 }
- 

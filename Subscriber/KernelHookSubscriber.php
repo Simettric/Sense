@@ -12,7 +12,8 @@ use Simettric\Sense\Controller\InterceptorCollection;
 use Simettric\Sense\Controller\AbstractInterceptor;
 use Simettric\Sense\Router\Router;
 
-class KernelHookSubscriber implements WPHookSubscriberInterface{
+class KernelHookSubscriber implements WPHookSubscriberInterface
+{
 
     /**
      * @var Router
@@ -31,9 +32,10 @@ class KernelHookSubscriber implements WPHookSubscriberInterface{
     private $wp_query;
 
 
-    function __construct(\WP_Query $query,
+    public function __construct(\WP_Query $query,
                          Router $router,
-                         InterceptorCollection $interceptorCollection){
+                         InterceptorCollection $interceptorCollection)
+    {
 
         $this->router = $router;
         $this->interceptorCollection = $interceptorCollection;
@@ -42,14 +44,13 @@ class KernelHookSubscriber implements WPHookSubscriberInterface{
     }
 
 
-    function registerHooks()
+    public function registerHooks()
     {
         \add_action("parse_query", array($this->router, "match"));
         \add_action('pre_get_posts', array($this, "executeInterceptors"));
     }
 
-    function executeInterceptors(){
-
+    public function executeInterceptors(){
 
         /**
          * @var $interceptor AbstractInterceptor

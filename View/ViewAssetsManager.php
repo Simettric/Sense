@@ -8,7 +8,8 @@
 namespace Simettric\Sense\View;
 
 
-class ViewAssetsManager {
+class ViewAssetsManager
+{
 
 
 	private $styles = array();
@@ -16,7 +17,8 @@ class ViewAssetsManager {
 	private $javascripts = array();
 
 
-	function addStyle($key, $url, $version, $dependencies=array(), $media="all"){
+    public function addStyle($key, $url, $version, $dependencies=array(), $media="all")
+    {
 		$this->styles[$key] = array(
 			'src'       => $url,
 			'dependencies'  => $dependencies,
@@ -25,7 +27,8 @@ class ViewAssetsManager {
 		);
 	}
 
-	function addScript($key, $url, $version, $in_footer=true, $dependencies=array()){
+    public function addScript($key, $url, $version, $in_footer=true, $dependencies=array())
+    {
 		$this->javascripts[$key] = array(
 			'src'       => $url,
 			'dependencies'  => $dependencies,
@@ -35,7 +38,8 @@ class ViewAssetsManager {
 	}
 
 
-	function onEnqueueScriptsAction(){
+    public function onEnqueueScriptsAction()
+    {
 		foreach($this->javascripts as $handle=>$item){
 			if($item["src"]){
 				\wp_enqueue_script( $handle, $item["src"], $item["dependencies"], $item["version"], $item["in_footer"] );
@@ -52,4 +56,4 @@ class ViewAssetsManager {
 		}
 	}
 
-} 
+}

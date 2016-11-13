@@ -10,12 +10,14 @@ namespace Simettric\Sense\Tests\Router;
 
 use Simettric\Sense\Router\AbsoluteUrlGeneratorInterface;
 
-class DummyUrlAbsoluteGenerator implements AbsoluteUrlGeneratorInterface{
+class DummyUrlAbsoluteGenerator implements AbsoluteUrlGeneratorInterface
+{
 
-    function createUrl($path)
+    public function createUrl($path)
     {
         return "http://example.com/es" . $path;
     }
 
 }
+
  

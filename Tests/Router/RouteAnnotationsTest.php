@@ -15,12 +15,12 @@ use Simettric\Sense\Annotations\Route;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Finder\Finder;
 
-class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase {
+class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase
+{
 
+    public function testReadAnnotationsInFile()
+    {
 
-
-
-    function testReadAnnotationsInFile(){
         AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
         $reader = new AnnotationReader();
         $reflClass = new \ReflectionClass("Simettric\\Sense\\Tests\\Router\\DummyController");
@@ -38,9 +38,8 @@ class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase {
 
     }
 
-    function testFindAnnotationClasses(){
-
-
+    public function testFindAnnotationClasses()
+    {
         AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
 
 
@@ -76,4 +75,3 @@ class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase {
 
 
 }
- 

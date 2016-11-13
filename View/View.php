@@ -11,7 +11,8 @@ namespace Simettric\Sense\View;
 use Simettric\Sense\Router\UrlGenerator;
 use Simettric\Sense\Traits\ArrayTrait;
 
-class View {
+class View
+{
 
 	use ArrayTrait;
 
@@ -24,27 +25,31 @@ class View {
 	private $urlGenerator;
 
 
-	function __construct(UrlGenerator $urlGenerator){
+    public function __construct(UrlGenerator $urlGenerator)
+    {
 		$this->urlGenerator = $urlGenerator;
 	}
 
 
-	function get($key, $default=null){
+    public function get($key, $default=null)
+    {
 		return $this->getArrayValue($key, $this->parameters, $default);
 	}
 
-	function set($key, $value){
+    public function set($key, $value)
+    {
 		$this->parameters[$key] = $value;
 	}
 
 
-	function path($name, $params){
+    public function path($name, $params)
+    {
 		return $this->urlGenerator->generateUrl($name, $params);
 	}
 
-	function url($name, $params){
+    public function url($name, $params)
+    {
 		return $this->urlGenerator->generateUrl($name, $params, true);
 	}
 
-
-} 
+}

@@ -8,9 +8,7 @@
 namespace Simettric\Sense\Subscriber;
 
 
-interface WPHookSubscriberInterface {
-
-
-    function registerHooks();
-
-} 
+interface WPHookSubscriberInterface
+{
+    public function registerHooks();
+}
