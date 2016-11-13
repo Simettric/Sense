@@ -10,10 +10,11 @@ namespace Simettric\Sense\Controller;
 
 use Collections\Collection;
 
-class InterceptorCollection extends Collection{
+class InterceptorCollection extends Collection
+{
 
-    function __construct(){
+    public function __construct(){
         parent::__construct("Simettric\\Sense\\Controller\\AbstractInterceptor");
     }
 
-} 
+}

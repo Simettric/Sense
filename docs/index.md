@@ -47,4 +47,3 @@ Sense is a MVC Framework designed to build complex websites and web applications
 (Yes, you can use Twig if you want too ;)
     
 ### [Read the documentation](http://sense.readthedocs.io/en/latest/) 
-

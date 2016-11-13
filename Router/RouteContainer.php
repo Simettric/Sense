@@ -10,16 +10,17 @@ namespace Simettric\Sense\Router;
 
 use Collections\Collection;
 
-class RouteContainer extends Collection{
+class RouteContainer extends Collection
+{
 
-    function __construct(){
+    public function __construct(){
         parent::__construct("Simettric\\Sense\\Router\\RouteInterface");
     }
 
-    function get($name){
+    public function get($name){
         return $this->find(function(RouteInterface $route) use ($name){
                 return $route->getName() == $name;
         });
     }
 
-} 
+}

@@ -15,7 +15,8 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractController  {
+abstract class AbstractController
+{
 
     /**
      * @var Container
@@ -28,35 +29,42 @@ abstract class AbstractController  {
     protected $plugin;
 
 
-    function __construct(Container $container, AbstractPlugin $plugin=null){
+    public function __construct(Container $container, AbstractPlugin $plugin=null)
+    {
         $this->container = $container;
         $this->plugin = $plugin;
     }
 
-    function get($key){
+    public function get($key)
+    {
         return $this->container->get($key);
     }
 
-    function addScript($name, $url, $version, $deps=array(), $footer=true){
+    public function addScript($name, $url, $version, $deps=array(), $footer=true)
+    {
         $this->container->get("view_assets")->addScript($name, $url, $version, $footer, $deps);
     }
 
-    function addStyle($name, $url, $version, $deps=array()){
+    public function addStyle($name, $url, $version, $deps=array())
+    {
         $this->container->get("view_assets")->addStyle($name, $url, $version, $deps);
     }
 
 
-    function assignToView($key, $value){
+    public function assignToView($key, $value)
+    {
         $this->container->get("view")->set($key, $value);
     }
 
 
-    function generateUrl($url, $params=array(), $absolute=false){
+    public function generateUrl($url, $params=array(), $absolute=false)
+    {
         return $this->container->get("router")->generateUrl($url, $params, $absolute);
     }
 
 
-    function resultTemplate($template, $params=array()){
+    public function resultTemplate($template, $params=array())
+    {
 
         foreach($params as $name=>$param){
             $this->container->get("view")->set($name, $param);
@@ -68,7 +76,8 @@ abstract class AbstractController  {
         );
     }
 
-    function resultResponse($content, $code=200, $headers=array()){
+    public function resultResponse($content, $code=200, $headers=array())
+    {
 
 
         if($content instanceof Response){
@@ -85,7 +94,8 @@ abstract class AbstractController  {
 
     }
 
-    function resultRedirect($url, $code=302, $headers=array()){
+    public function resultRedirect($url, $code=302, $headers=array())
+    {
 
         $response = new RedirectResponse($url, $code, $headers);
 
@@ -95,12 +105,14 @@ abstract class AbstractController  {
         return $result;
     }
 
-    function setTitle($title) {
+    public function setTitle($title)
+    {
 
         add_filter( 'wp_title', function () use($title) { return $title; }, 10, 2 );
     }
 
-    function setDescription($description) {
+    public function setDescription($description)
+    {
 
         add_filter('bloginfo',function($info, $show) use($description) {
             if ($show == 'description') {
@@ -110,7 +122,4 @@ abstract class AbstractController  {
         },10,2);
     }
 
-
-
-
-} 
+}

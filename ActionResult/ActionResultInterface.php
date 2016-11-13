@@ -8,9 +8,7 @@
 namespace Simettric\Sense\ActionResult;
 
 
-interface ActionResultInterface {
-
-
-    function execute();
-
-} 
+interface ActionResultInterface
+{
+    public function execute();
+}

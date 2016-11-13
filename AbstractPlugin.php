@@ -17,7 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Finder\Finder;
 
-abstract class AbstractPlugin {
+abstract class AbstractPlugin
+{
 
 
     private $base_namespace = null;
@@ -26,26 +27,31 @@ abstract class AbstractPlugin {
 
     private $rootDir = false;
 
-    function setRootDir($dir){
+    public function setRootDir($dir)
+    {
         $this->rootDir = $dir;
     }
 
-    function getConfigLocations(){
+    public function getConfigLocations()
+    {
         return [ $this->rootDir . "/Config"];
     }
 
-    function getControllerLocations(){
+    public function getControllerLocations()
+    {
         return [ $this->rootDir . "/Controller" ];
     }
 
-    function getTemplateLocations(){
+    public function getTemplateLocations()
+    {
         return [ $this->rootDir . "/View"];
     }
 
-    abstract function getName();
+    public abstract function getName();
 
 
-    function getBaseNamespace(){
+    public function getBaseNamespace()
+    {
 
         if(!$this->base_namespace){
             $ref = new \ReflectionObject($this);
@@ -54,7 +60,8 @@ abstract class AbstractPlugin {
         return $this->base_namespace;
     }
 
-    function registerRoutes(Collection $routeContainer){
+    public function registerRoutes(Collection $routeContainer)
+    {
 
         if(!count($this->getControllerLocations())) return;
 
@@ -104,7 +111,8 @@ abstract class AbstractPlugin {
 
     }
 
-    function registerServices(ContainerInterface $container) {
+    public function registerServices(ContainerInterface $container)
+    {
 
 	    if(count($this->getConfigLocations())){
 		    $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
@@ -113,7 +121,8 @@ abstract class AbstractPlugin {
 
     }
 
-    function getClassInFile($file) {
+    public function getClassInFile($file)
+    {
 
 		    //Grab the contents of the file
 		    $contents = file_get_contents($file);
@@ -182,21 +191,25 @@ abstract class AbstractPlugin {
 	 *
 	 * Note: Themes can´t implement pluggable functions
 	 */
-	function registerPluggableFunctions() {
+	public function registerPluggableFunctions()
+    {
 		if($this->isTheme()) return;
 	}
 
 
-    function isTheme(){
+    public function isTheme()
+    {
         return false;
     }
 
-    function hasRoutes(){
+    public function hasRoutes()
+    {
         return $this->has_routes;
     }
 
 
-    function onActivate(){
+    public function onActivate()
+    {
 
         if($this->hasRoutes()){
 
@@ -205,4 +218,4 @@ abstract class AbstractPlugin {
 
     }
 
-} 
+}

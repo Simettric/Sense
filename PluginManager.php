@@ -9,16 +9,9 @@ namespace Simettric\Sense;
 
 
 use Collections\Collection;
-use Simettric\Sense\Router\RouteContainer;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class PluginManager {
-
-
+class PluginManager
+{
 
 
     /**
@@ -27,16 +20,15 @@ class PluginManager {
     private $plugins;
 
 
-    function __construct(){
+    function __construct()
+    {
 
         $this->plugins    = new Collection("Simettric\\Sense\\AbstractPlugin");
     }
 
 
-
-
-
-    function register(AbstractPlugin $plugin, $file){
+    public function register(AbstractPlugin $plugin, $file)
+    {
 
         $this->plugins->add($plugin);
 
@@ -52,15 +44,9 @@ class PluginManager {
 
     }
 
-
-
-    function getPlugins(){
+    public function getPlugins()
+    {
         return $this->plugins;
     }
 
-
-
-
-
-
-} 
+}

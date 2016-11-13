@@ -8,10 +8,11 @@
 namespace Simettric\Sense\Router;
 
 
-class DefaultWPUrlAbsoluteGenerator implements AbsoluteUrlGeneratorInterface{
+class DefaultWPUrlAbsoluteGenerator implements AbsoluteUrlGeneratorInterface
+{
 
 
-	function createUrl( $path ) {
+    public function createUrl( $path ) {
 		return \home_url($path);
 	}
 }

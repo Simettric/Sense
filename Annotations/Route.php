@@ -13,7 +13,8 @@ use Simettric\Sense\Router\RouteInterface;
  * @Annotation
  * @Target({"METHOD","PROPERTY"})
  */
-class Route implements RouteInterface{
+class Route implements RouteInterface
+{
 
     /** @var string */
     public $path;
@@ -45,7 +46,8 @@ class Route implements RouteInterface{
 
 
 
-    function __construct( $data=[] ){
+    public function __construct( $data=[] )
+    {
 
         if (isset($data['value'])) {
             $data['path'] = $data['value'];
@@ -60,7 +62,8 @@ class Route implements RouteInterface{
 
     }
 
-    function configure(){
+    public function configure()
+    {
 
 	    $this->params["__route_name"] = $this->name;
 
@@ -95,56 +98,63 @@ class Route implements RouteInterface{
     }
 
 
-    function getName(){
+    public function getName()
+    {
         return $this->name;
     }
 
-    function getPath(){
+    public function getPath()
+    {
         return $this->path;
     }
 
-    function getParams(){
+    public function getParams()
+    {
         return $this->params;
     }
 
-    function getUrlParams(){
+    public function getUrlParams()
+    {
         return $this->url_params;
     }
 
-    function getRegExp(){
+    public function getRegExp()
+    {
         return $this->regexp;
     }
 
-    function getUrl(){
+    public function getUrl()
+    {
         return $this->url;
     }
 
-    function getControllerClassName()
+    public function getControllerClassName()
     {
         return $this->controller_class;
     }
 
-    function getActionMethod()
+    public function getActionMethod()
     {
         return $this->controller_method;
     }
 
-    function setControllerClassName($class_name)
+    public function setControllerClassName($class_name)
     {
         $this->controller_class = $class_name;
     }
 
-    function setActionMethod($method_name)
+    public function setActionMethod($method_name)
     {
         $this->controller_method = $method_name;
     }
 
 
-	function getPlugin() {
+	public function getPlugin()
+    {
 		return $this->plugin;
 	}
 
-	function setPlugin( AbstractPlugin $plugin ) {
+	public function setPlugin( AbstractPlugin $plugin ) {
 		$this->plugin = $plugin;
 	}
 }

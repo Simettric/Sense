@@ -17,7 +17,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Router {
+class Router
+{
 
 
     use ArrayTrait;
@@ -33,11 +34,13 @@ class Router {
 
     private $_already_matched = false;
 
-    function __construct(Container $container){
+    public function __construct(Container $container)
+    {
         $this->_container = $container;
     }
 
-    function registerRouteRules(){
+    public function registerRouteRules()
+    {
 
         $extra = array();
 
@@ -74,10 +77,8 @@ class Router {
 
     }
 
-    function match(){
-
-
-
+    public  function match()
+    {
 
         global $wp_query;
 
@@ -113,7 +114,8 @@ class Router {
 
     }
 
-    function regenerateWPRouteCache(){
+    public function regenerateWPRouteCache()
+    {
     	flush_rewrite_rules(true);
     }
 
@@ -122,7 +124,8 @@ class Router {
      * @return ActionResultInterface
      * @throws \Exception
      */
-    function executeControllerAction(RouteInterface $route){
+    public function executeControllerAction(RouteInterface $route)
+    {
 
         $controller_name = $route->getControllerClassName();
         $action_name     = $route->getActionMethod();
@@ -158,4 +161,4 @@ class Router {
     }
 
 
-} 
+}

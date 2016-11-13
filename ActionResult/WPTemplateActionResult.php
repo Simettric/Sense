@@ -8,20 +8,23 @@
 namespace Simettric\Sense\ActionResult;
 
 
-class WPTemplateActionResult implements  ActionResultInterface  {
+class WPTemplateActionResult implements  ActionResultInterface
+{
 
 
     private $template_file;
 
 	private $locations;
 
-    function __construct($template_file, $template_locations=array()){
+    public function __construct($template_file, $template_locations=array())
+    {
         $this->template_file = $template_file;
 	    $this->locations = $template_locations;
     }
 
 
-    function execute(){
+    public function execute()
+    {
 
         \add_filter('template_include', array($this, "templateInclude"));
     }
@@ -30,7 +33,8 @@ class WPTemplateActionResult implements  ActionResultInterface  {
      * called by \add_filter( 'template_include' );
      * @return mixed
      */
-    function templateInclude(){
+    public function templateInclude()
+    {
         global $template;
 
 
@@ -47,8 +51,8 @@ class WPTemplateActionResult implements  ActionResultInterface  {
         return $template;
     }
 
-    function getResponse(){
+    public function getResponse(){
         return null;
     }
 
-} 
+}

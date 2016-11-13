@@ -10,42 +10,41 @@ namespace Simettric\Sense\Router;
 
 use Simettric\Sense\AbstractPlugin;
 
-interface RouteInterface {
+interface RouteInterface
+{
 
-    function configure();
+    public function configure();
 
-    function getName();
+    public function getName();
 
-    function getPath();
+    public function getPath();
 
-    function getParams();
+    public function getParams();
 
-    function getUrlParams();
+    public function getUrlParams();
 
-    function getRegExp();
+    public function getRegExp();
 
-    function getUrl();
+    public function getUrl();
 
-    function getControllerClassName();
+    public function getControllerClassName();
 
-	function setControllerClassName($class_name);
+    public function setControllerClassName($class_name);
 
-    function getActionMethod();
+    public function getActionMethod();
 
-    function setActionMethod($method_name);
+    public function setActionMethod($method_name);
 
 	/**
 	 * @return AbstractPlugin
 	 */
-	function getPlugin();
+    public function getPlugin();
 
 	/**
 	 * @param AbstractPlugin $plugin
 	 *
 	 * @return void
 	 */
-	function setPlugin(AbstractPlugin $plugin);
+    public function setPlugin(AbstractPlugin $plugin);
 
-
-
-} 
+}

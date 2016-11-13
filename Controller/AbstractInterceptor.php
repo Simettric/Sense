@@ -8,26 +8,27 @@
 namespace Simettric\Sense\Controller;
 
 
-abstract class AbstractInterceptor extends AbstractBaseController{
+abstract class AbstractInterceptor extends AbstractController
+{
 
 	protected static $executed = false;
 
     /**
      * @return bool
      */
-    abstract function canBeExecuted();
+    public abstract function canBeExecuted();
 
     /**
      * @param \WP_Query $query
      * @return void
      */
-	abstract function execute(\WP_Query $query);
+    public abstract function execute(\WP_Query $query);
 
 
     /**
      * @return bool
      */
-	function isExecuted(){
+    public function isExecuted(){
 
 		$executed = static::$executed;
 
@@ -38,8 +39,4 @@ abstract class AbstractInterceptor extends AbstractBaseController{
 
 	}
 
-
-
-
-
-} 
+}

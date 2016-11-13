@@ -12,19 +12,22 @@ namespace Simettric\Sense\ActionResult;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class HTTPResponseActionResult implements ActionResultInterface {
+class HTTPResponseActionResult implements ActionResultInterface
+{
 
 
     private $_response;
 
-    function setResponse(Response $response){
+    public function setResponse(Response $response)
+    {
 
         $this->_response = $response;
 
     }
 
 
-    function execute(){
+    public function execute()
+    {
         /**
          * @var $response Response
          */
@@ -44,7 +47,7 @@ class HTTPResponseActionResult implements ActionResultInterface {
     }
 
 
-    function getResponse(){
+    public function getResponse(){
 
         return $this->_response;
 

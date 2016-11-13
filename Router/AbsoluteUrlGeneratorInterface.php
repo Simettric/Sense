@@ -8,9 +8,10 @@
 namespace Simettric\Sense\Router;
 
 
-interface AbsoluteUrlGeneratorInterface {
+interface AbsoluteUrlGeneratorInterface
+{
 
 
-	function createUrl($path);
+    public function createUrl($path);
 
-} 
+}

@@ -8,9 +8,8 @@
 namespace Simettric\Sense\Router;
 
 
-use Doctrine\Common\Collections\Collection;
-
-class UrlGenerator {
+class UrlGenerator
+{
 
 
     /**
@@ -23,16 +22,19 @@ class UrlGenerator {
 	 */
 	private $absoluteUrlGenerator;
 
-    function __construct(RouteContainer $routeContainer, AbsoluteUrlGeneratorInterface $absoluteUrlGenerator){
+    public function __construct(RouteContainer $routeContainer, AbsoluteUrlGeneratorInterface $absoluteUrlGenerator)
+    {
         $this->routerContainer = $routeContainer;
 	    $this->absoluteUrlGenerator = $absoluteUrlGenerator;
     }
 
-	function setAbsoluteUrlGenerator(AbsoluteUrlGeneratorInterface $absoluteUrlGenerator){
+    public function setAbsoluteUrlGenerator(AbsoluteUrlGeneratorInterface $absoluteUrlGenerator)
+    {
 		$this->absoluteUrlGenerator = $absoluteUrlGenerator;
 	}
 
-    function generateUrl($name, $params=array(), $absolute=false){
+    public function generateUrl($name, $params=array(), $absolute=false)
+    {
 
         if(!$route = $this->routerContainer->get($name)){
             return null;
@@ -59,8 +61,9 @@ class UrlGenerator {
     }
 
 
-	function getAbsoluteUrl($path){
+    public function getAbsoluteUrl($path)
+    {
 		return $this->absoluteUrlGenerator->createUrl($path);
 	}
 
-} 
+}
