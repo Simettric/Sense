@@ -33,9 +33,8 @@ class WPTemplateActionResult implements  ActionResultInterface
      * called by \add_filter( 'template_include' );
      * @return mixed
      */
-    public function templateInclude()
+    public function templateInclude($template)
     {
-        global $template;
 
 
 	    foreach ($this->locations as $dir) {
