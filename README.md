@@ -1,6 +1,7 @@
 Sense Framework
 =====
 [![Build Status](https://travis-ci.org/Simettric/Sense.svg?branch=master)](https://travis-ci.org/Simettric/Sense)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b19462fc-cfac-46b1-bab6-2dee114ef097/big.png)](https://insight.sensiolabs.com/projects/b19462fc-cfac-46b1-bab6-2dee114ef097)
 
 Sense is a MVC Framework designed to build complex websites and web applications based on WordPress.
 
