@@ -15,6 +15,8 @@ use Simettric\Sense\Router\Route;
 use Simettric\Sense\Router\RouteContainer;
 use Simettric\Sense\Router\Router;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,12 +55,21 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null));
 
 
+        $parameters = $this->getMockBuilder(ParameterBag::class)->getMock();
+        $parameters->method('set')
+            ->will($this->returnValue(null));
+
+        $wp_query = $this->getMockBuilder("WP_Query")->getMock();
+        $wp_query->query_vars = array('test_route'=>'test');
+
+        $route_container = $this->getMockBuilder(RouteContainer::class)->getMock();
+        $request = $this->getMockBuilder(Request::class)->getMock();
+        $request->attributes = $parameters;
 
 
+        $router = new Router($route_container, $request, $di_container);
 
-        $router = new Router($di_container);
-
-        $this->assertInstanceOf(ActionResultInterface::class, $router->executeControllerAction($this->getRoute()));
+        $this->assertInstanceOf(ActionResultInterface::class, $router->executeControllerAction($this->getRoute(), $wp_query));
         
 
     }

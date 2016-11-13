@@ -1,0 +1,4 @@
+rules:
+    php.use_exit_function:
+        enabled: true
+        ignore_files: [ActionResult/HTTPResponseActionResult.php]
