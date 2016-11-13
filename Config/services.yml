@@ -7,10 +7,6 @@ services:
     class: Simettric\Sense\PluginManager
     arguments: ["%sense.plugins_order%"]
 
-  router:
-    class: Simettric\Sense\Router\Router
-    arguments: ["@service_container"]
-
   router.absolute_url_generator:
     class: %router.url_absolute_generator_class%
 
@@ -28,3 +24,7 @@ services:
   request:
     class: Symfony\Component\HttpFoundation\Request
     factory: [Symfony\Component\HttpFoundation\Request, 'createFromGlobals']
+
+  router:
+    class: Simettric\Sense\Router\Router
+    arguments: ["@router.route_container","@request", "@service_container"]

@@ -14,8 +14,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Kernel
 {
-
-
+	
 	/**
 	 * @var array
 	 */
@@ -84,6 +83,7 @@ class Kernel
 		\add_action( 'after_setup_theme', array($this, 'onAfterSetupTheme'));
 
 		\add_action( 'parse_query', array($this->container->get("router"), "match"));
+
 		\add_action( 'init' , array($this, 'onInit'));
 
 	}
@@ -155,12 +155,8 @@ class Kernel
 
 	public function registerServices()
 	{
-		
+
 		$this->container->setParameter('debug_mode', WP_DEBUG);
-
-		global $wp_query;
-		$this->container->set('wp.query', $wp_query);
-
 
 		/**
 		 * @var $plugin AbstractPlugin
@@ -184,9 +180,6 @@ class Kernel
 
 			$plugin->registerRoutes($this->container->get("router.route_container"));
 		}
-
-
-
 
 	}
 

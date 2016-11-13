@@ -13,6 +13,7 @@ use Simettric\Sense\ActionResult\ActionResultInterface;
 use Simettric\Sense\ActionResult\WPTemplateActionResult;
 use Simettric\Sense\Traits\ArrayTrait;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,18 +26,28 @@ class Router
 
     public $controller_instance, $action_name;
 
-
+    /**
+     * @var RouteContainer
+     */
+    private $_routeContainer;
 
     /**
-     * @var Container
+     * @var Request
+     */
+    private $_request;
+
+    /**
+     * @var ContainerInterface
      */
     private $_container;
 
     private $_already_matched = false;
 
-    public function __construct(Container $container)
+    public function __construct(RouteContainer $routeContainer, Request $request, ContainerInterface $container)
     {
-        $this->_container = $container;
+        $this->_routeContainer = $routeContainer;
+        $this->_request        = $request;
+        $this->_container      = $container;
     }
 
     public function registerRouteRules()
@@ -47,7 +58,7 @@ class Router
         /**
          * @var $route RouteInterface
          */
-        foreach ($this->_container->get("router.route_container") as $route) {
+        foreach ($this->_routeContainer as $route) {
 
 	        $params = array_merge(array_keys($route->getParams()), array_keys($route->getUrlParams()));
 
@@ -63,12 +74,9 @@ class Router
 
         \add_filter("query_vars", function($qvars) use ($extra){
 
-
             foreach ($extra as $param) {
                 $qvars[] = $param;
             }
-
-
 
             return $qvars;
         });
@@ -77,7 +85,7 @@ class Router
 
     }
 
-    public  function match(\WP_Query $wp_query)
+    public function match(\WP_Query $wp_query)
     {
 
         \remove_action("parse_query", array($this, "match"));
@@ -86,7 +94,7 @@ class Router
 
         $route_name = $this->getArrayValue("__route_name", $wp_query->query_vars);
 
-        $route      = $this->_container->get("router.route_container")->get($route_name);
+        $route      = $this->_routeContainer->get($route_name);
 
 
         /**
@@ -96,7 +104,7 @@ class Router
 
             $this->_already_matched = true;
 
-            $actionResult = $this->executeControllerAction($route);
+            $actionResult = $this->executeControllerAction($route, $wp_query);
 
             if($actionResult instanceof ActionResultInterface){
 
@@ -122,28 +130,20 @@ class Router
      * @return ActionResultInterface
      * @throws \Exception
      */
-    public function executeControllerAction(RouteInterface $route)
+    public function executeControllerAction(RouteInterface $route, \WP_Query $wp_query)
     {
 
         $controller_name = $route->getControllerClassName();
         $action_name     = $route->getActionMethod();
 
 
-        /**
-         * @var $request Request
-         */
-        $request = $this->_container->get("request");
 
-        /**
-         * @var $wp_query \WP_Query
-         */
-        $wp_query = $this->_container->get("wp.query");
 
-        if($request)
+        if($this->_request)
         {
             foreach ($route->getUrlParams() as $param_name=>$param_match)
             {
-                $request->attributes->set($param_name, $wp_query->query_vars[$param_name]);
+                $this->_request->attributes->set($param_name, $wp_query->query_vars[$param_name]);
             }
         }
 
@@ -152,7 +152,7 @@ class Router
 
         return call_user_func(
                     [new $controller_name($this->_container, $route->getPlugin()), $action_name],
-                    $request,
+                    $this->_request,
                     $wp_query
         );
 
