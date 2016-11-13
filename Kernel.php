@@ -12,7 +12,8 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class Kernel {
+class Kernel
+{
 
 
 	/**
@@ -38,7 +39,8 @@ class Kernel {
 	 */
 	private $container;
 
-	private function __construct($config_params=array()) {
+	private function __construct($config_params=array())
+	{
 
 		$this->container = new ContainerBuilder();
 
@@ -55,7 +57,8 @@ class Kernel {
 	/**
 	 * @return Kernel
 	 */
-	static function getInstance() {
+	public static function getInstance()
+	{
 		if(!self::$instance) {
 			self::$instance = new Kernel(array_merge(self::$configParams, array(
 				"plugins_order" => array()
@@ -68,11 +71,13 @@ class Kernel {
 	 * @param array $config_params
 	 *
 	 */
-	static function configure($config_params=array()){
+	public static function configure($config_params=array())
+	{
 		self::$configParams = $config_params;
 	}
 
-	function initCoreSubscribers() {
+	public function initCoreSubscribers()
+	{
 
 		\add_action( 'muplugins_loaded', array($this, 'onMuPluginsLoaded'));
 		\add_action( 'plugins_loaded', array($this, 'onPluginsLoaded'));
@@ -83,11 +88,13 @@ class Kernel {
 
 	}
 
-	function onMuPluginsLoaded() {
+	public function onMuPluginsLoaded()
+	{
 		$this->initialized = true;
 	}
 
-	function onPluginsLoaded (){
+	public function onPluginsLoaded ()
+	{
 
 		if(!$this->initialized)
 			$this->initialized = true;
@@ -98,7 +105,8 @@ class Kernel {
 
 
 
-	function onAfterSetupTheme(){
+	public function onAfterSetupTheme()
+	{
 
 		if(!$this->initialized){
 
@@ -123,7 +131,8 @@ class Kernel {
 		$this->registerRoutes();
 	}
 
-	function onInit(){
+	public function onInit()
+	{
 		$this->container->get("router")->registerRouteRules();
 
 
@@ -132,7 +141,8 @@ class Kernel {
 		}
 	}
 
-	function loadPluggableFunctions(){
+	public function loadPluggableFunctions()
+	{
 
 		/**
 		 * @var $plugin AbstractPlugin
@@ -143,10 +153,9 @@ class Kernel {
 		}
 	}
 
-	function registerServices(){
-
-
-
+	public function registerServices()
+	{
+		
 		$this->container->setParameter('debug_mode', WP_DEBUG);
 
 		global $wp_query;
@@ -165,7 +174,8 @@ class Kernel {
 
 	}
 
-	function registerRoutes(){
+	public function registerRoutes()
+	{
 
 		/**
 		 * @var $plugin AbstractPlugin
@@ -184,7 +194,8 @@ class Kernel {
 	/**
 	 * @return ContainerBuilder
 	 */
-	function getContainer(){
+	public function getContainer()
+	{
 		return $this->container;
 	}
 
