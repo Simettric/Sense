@@ -104,7 +104,7 @@ class Router
 
             }else{
 
-                throw new \Exception($route->getControllerClassName() . "::" . $route->getActionName() . " must to return an ActionResult object");
+                throw new \Exception($route->getControllerClassName() . "::" . $route->getActionMethod() . " must to return an ActionResult object");
 
             }
 
