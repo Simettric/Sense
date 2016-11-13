@@ -7,17 +7,10 @@
 
 namespace Simettric\Sense;
 
-	use Simettric\Sense\Router\DefaultWPUrlAbsoluteGenerator;
-	use Simettric\Sense\Router\RouteContainer;
-	use Simettric\Sense\Router\Router;
-	use Simettric\Sense\View\View;
-	use Symfony\Component\Config\Definition\Exception\Exception;
-	use Symfony\Component\Config\FileLocator;
-	use Symfony\Component\DependencyInjection\ContainerBuilder;
-	use Symfony\Component\DependencyInjection\Definition;
-	use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-	use Symfony\Component\DependencyInjection\Reference;
-	use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Kernel {
 

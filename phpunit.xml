@@ -8,10 +8,10 @@
          convertWarningsToExceptions="true"
          stopOnFailure="false"
          bootstrap="vendor/autoload.php"
-        >
+>
     <testsuites>
-        <testsuite name="CommerceGuys Intl Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Simettric Sense Test Suite">
+            <directory>./Tests/</directory>
         </testsuite>
     </testsuites>
 
