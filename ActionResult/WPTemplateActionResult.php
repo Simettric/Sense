@@ -8,6 +8,9 @@
 namespace Simettric\Sense\ActionResult;
 
 
+
+use Collections\Exceptions\Exception;
+
 class WPTemplateActionResult implements  ActionResultInterface
 {
 
@@ -47,7 +50,8 @@ class WPTemplateActionResult implements  ActionResultInterface
 
 	    }
 
-        return $template;
+
+        wp_die("Template {$this->template_file} not found in any of these directories: " . implode(", ", $this->locations) );
     }
 
     public function getResponse(){
