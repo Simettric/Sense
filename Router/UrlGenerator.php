@@ -55,6 +55,10 @@ class UrlGenerator
 
         if(substr($path, 0, strlen($path)-1)=="?") str_replace("?", "", $path);
 
+        if("/" != substr($path, 0, 1))
+        {
+            $path = "/" . $path;
+        }
 
         return $absolute ? $this->getAbsoluteUrl($path) : $path;
 
