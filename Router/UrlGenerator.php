@@ -51,13 +51,20 @@ class UrlGenerator
 
 
             $path = str_replace("{" .$required ."}", $params[$required], $path);
+            unset($params[$required]);
         }
+
 
         if(substr($path, 0, strlen($path)-1)=="?") str_replace("?", "", $path);
 
         if("/" != substr($path, 0, 1))
         {
             $path = "/" . $path;
+        }
+
+        if(count($params))
+        {
+            $path = $path . "?" . http_build_query($params);
         }
 
         return $absolute ? $this->getAbsoluteUrl($path) : $path;
