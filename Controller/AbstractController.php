@@ -59,7 +59,7 @@ abstract class AbstractController
 
     public function generateUrl($url, $params=array(), $absolute=false)
     {
-        return $this->container->get("router")->generateUrl($url, $params, $absolute);
+        return $this->container->get("url_generator")->generateUrl($url, $params, $absolute);
     }
 
 
