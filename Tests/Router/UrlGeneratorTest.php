@@ -63,7 +63,7 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->route_container->add($route2);
 
-        $this->assertEquals("test/test", $this->url_generator->generateUrl("test_params", ["param" => "test"]));
+        $this->assertEquals("/test/test", $this->url_generator->generateUrl("test_params", ["param" => "test"]));
 
 
     }
