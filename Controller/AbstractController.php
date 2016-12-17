@@ -11,6 +11,7 @@ namespace Simettric\Sense\Controller;
 use Simettric\Sense\AbstractPlugin;
 use Simettric\Sense\ActionResult\HTTPResponseActionResult;
 use Simettric\Sense\ActionResult\WPTemplateActionResult;
+use Simettric\Sense\Exception\NotFoundException;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,6 +121,11 @@ abstract class AbstractController
             }
             return $info;
         },10,2);
+    }
+
+    protected function createNotFoundException()
+    {
+        return new NotFoundException();
     }
 
 }

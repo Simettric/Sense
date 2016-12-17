@@ -11,6 +11,7 @@ namespace Simettric\Sense\Router;
 use Collections\Collection;
 use Simettric\Sense\ActionResult\ActionResultInterface;
 use Simettric\Sense\ActionResult\WPTemplateActionResult;
+use Simettric\Sense\Exception\NotFoundException;
 use Simettric\Sense\Traits\ArrayTrait;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -104,16 +105,24 @@ class Router
 
             $this->_already_matched = true;
 
-            $actionResult = $this->executeControllerAction($route, $wp_query);
+            try{
 
-            if($actionResult instanceof ActionResultInterface){
+                $actionResult = $this->executeControllerAction($route, $wp_query);
 
-                $actionResult->execute();
+                if($actionResult instanceof ActionResultInterface){
 
-            }else{
+                    $actionResult->execute();
 
-                throw new \Exception($route->getControllerClassName() . "::" . $route->getActionMethod() . " must to return an ActionResult object");
+                }else{
 
+                    throw new \Exception($route->getControllerClassName() . "::" . $route->getActionMethod() . " must to return an ActionResult object");
+
+                }
+
+            }catch (NotFoundException $e)
+            {
+                $wp_query->set_404();
+                status_header(404);
             }
 
         }
