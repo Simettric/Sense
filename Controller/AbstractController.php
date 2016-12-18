@@ -109,7 +109,7 @@ abstract class AbstractController
     public function setTitle($title)
     {
 
-        add_filter( 'wp_title', function () use($title) { return $title; }, 10, 2 );
+        add_filter( 'pre_get_document_title', function () use($title) {  return $title; }, 10, 2 );
     }
 
     public function setDescription($description)
