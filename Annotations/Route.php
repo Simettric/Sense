@@ -90,6 +90,11 @@ class Route implements RouteInterface
             $this->url_params[$_key] = '$matches['.($i+1).']';
         }
 
+        foreach ($this->requirements as $key=>$expr)
+        {
+            $this->requirements[$key] = "/$expr/";
+        }
+
         $this->regexp =  $regexp . "/?$" ;
 
         $params = array_merge($this->params, $this->url_params);

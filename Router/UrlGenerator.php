@@ -8,6 +8,8 @@
 namespace Simettric\Sense\Router;
 
 
+use Simettric\Sense\Annotations\Route;
+
 class UrlGenerator
 {
 
@@ -36,6 +38,9 @@ class UrlGenerator
     public function generateUrl($name, $params=array(), $absolute=false)
     {
 
+        /**
+         * @var $route Route
+         */
         if(!$route = $this->routerContainer->get($name)){
             return null;
         }
@@ -44,11 +49,17 @@ class UrlGenerator
         $url_params = array_keys($route->getUrlParams());
 
         foreach($url_params as $required){
+
             if(!isset($params[$required])){
 
                 throw new \Exception($required . " param is required for route " . $name);
             }
 
+            if(isset($route->requirements[$required]) &&
+                !preg_match($route->requirements[$required], $params[$required]))
+            {
+                throw new \Exception($required . " param value doesn´t match with  " . $route->requirements[$required]);
+            }
 
             $path = str_replace("{" .$required ."}", $params[$required], $path);
             unset($params[$required]);

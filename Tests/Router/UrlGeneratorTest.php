@@ -57,13 +57,13 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("/test-path", $this->url_generator->generateUrl("test_path"));
 
         $route2 = new Route();
-        $route2->name = "test_params";
+        $route2->name = "test_params1";
         $route2->path = "/test/{param}";
         $route2->configure();
 
         $this->route_container->add($route2);
 
-        $this->assertEquals("/test/test", $this->url_generator->generateUrl("test_params", ["param" => "test"]));
+        $this->assertEquals("/test/test", $this->url_generator->generateUrl("test_params1", ["param" => "test"]));
 
 
     }
@@ -75,12 +75,12 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
     {
 
         $route2 = new Route();
-        $route2->name = "test_params";
+        $route2->name = "test_params2";
         $route2->path = "/test/{param}";
         $route2->configure();
         $this->route_container->add($route2);
 
-        $this->url_generator->generateUrl("test_params");
+        $this->url_generator->generateUrl("test_params2");
 
     }
 
@@ -98,6 +98,46 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
             array(),
             true)
         );
+
+
+    }
+
+    public function testGenerateUrlFailWithRequirements()
+    {
+
+        $route2 = new Route();
+        $route2->name = "test_params3";
+        $route2->path = "/test/{param}";
+        $route2->requirements = array("param"=>"\d+");
+        $route2->configure();
+
+
+        $this->route_container->add($route2);
+
+        $this->expectException(\Exception::class);
+
+        $this->url_generator->generateUrl("test_params3", array("param" => "string"));
+
+        $this->assertEquals("/test/1", $this->url_generator->generateUrl("test_params3", array("param" => 1)));
+
+
+
+    }
+
+    public function testGenerateUrlWithRequirements()
+    {
+
+        $route2 = new Route();
+        $route2->name = "test_params3";
+        $route2->path = "/test/{param}";
+        $route2->requirements = array("param"=>"\d+");
+        $route2->configure();
+
+
+        $this->route_container->add($route2);
+
+        $this->assertEquals("/test/1", $this->url_generator->generateUrl("test_params3", array("param" => 1)));
+
 
 
     }
