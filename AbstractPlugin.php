@@ -50,7 +50,7 @@ abstract class AbstractPlugin
 
     public function getTemplateLocations()
     {
-        return [ $this->rootDir . "/View"];
+        return [ get_stylesheet_directory() . "/" . $this->getName(), $this->rootDir . "/View"];
     }
 
     public function getAdminTemplateLocations()
