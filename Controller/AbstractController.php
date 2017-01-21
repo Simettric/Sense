@@ -33,7 +33,7 @@ abstract class AbstractController
     public function __construct(Container $container, AbstractPlugin $plugin=null)
     {
         $this->container = $container;
-        $this->plugin = $plugin;
+        $this->plugin    = $plugin;
     }
 
     public function get($key)

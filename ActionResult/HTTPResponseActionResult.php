@@ -10,6 +10,7 @@ namespace Simettric\Sense\ActionResult;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class HTTPResponseActionResult implements ActionResultInterface
@@ -36,6 +37,10 @@ class HTTPResponseActionResult implements ActionResultInterface
         if($response instanceof JsonResponse){
 
             \wp_send_json(json_decode($response->getContent(), true));
+
+        }else if ($response instanceof RedirectResponse) {
+
+            wp_redirect($response->getTargetUrl(), $response->getStatusCode());
 
         }else{
 

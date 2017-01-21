@@ -7,6 +7,13 @@ services:
     class: Simettric\Sense\PluginManager
     arguments: ["%sense.plugins_order%"]
 
+  admin.route_container:
+    class: Simettric\Sense\Admin\RouteContainer
+
+  admin.router:
+    class: Simettric\Sense\Admin\Router
+    arguments: ["@admin.route_container", "@service_container"]
+
   router.absolute_url_generator:
     class: %router.url_absolute_generator_class%
 

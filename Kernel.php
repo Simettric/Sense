@@ -86,6 +86,8 @@ class Kernel
 
 		\add_action( 'init' , array($this, 'onInit'));
 
+		add_action('admin_menu', array($this->container->get("admin.router"), "registerRouteRules"));
+
 	}
 
 	public function onMuPluginsLoaded()
@@ -179,6 +181,7 @@ class Kernel
 		foreach($this->container->get("plugin_manager")->getPlugins() as $plugin){
 
 			$plugin->registerRoutes($this->container->get("router.route_container"));
+			$plugin->registerAdminRoutes($this->container->get("admin.route_container"));
 		}
 
 	}

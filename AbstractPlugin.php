@@ -11,6 +11,7 @@ namespace Simettric\Sense;
 use Collections\Collection;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Simettric\Sense\Annotations\AdminRoute;
 use Simettric\Sense\Router\RouteInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,6 +38,11 @@ abstract class AbstractPlugin
         return [ $this->rootDir . "/Config"];
     }
 
+    public function getAdminControllerLocations()
+    {
+        return [ $this->rootDir . "/AdminController" ];
+    }
+
     public function getControllerLocations()
     {
         return [ $this->rootDir . "/Controller" ];
@@ -45,6 +51,11 @@ abstract class AbstractPlugin
     public function getTemplateLocations()
     {
         return [ $this->rootDir . "/View"];
+    }
+
+    public function getAdminTemplateLocations()
+    {
+        return [ $this->rootDir . "/AdminView"];
     }
 
     public abstract function getName();
@@ -58,6 +69,56 @@ abstract class AbstractPlugin
             $this->base_namespace = $ref->getNamespaceName();
         }
         return $this->base_namespace;
+    }
+
+    public function registerAdminRoutes(Collection $routeContainer)
+    {
+        if(!count($this->getAdminControllerLocations())) return;
+
+        AnnotationRegistry::registerFile(__DIR__ . "/Annotations/AdminRoute.php");
+
+        $finder = new Finder();
+        $finder->files()->in($this->getAdminControllerLocations());
+        $files = $finder->files()->name('*Controller.php');
+
+        $this->has_routes = false;
+        foreach($files as $file){
+
+
+
+            $reader = new AnnotationReader();
+
+            $class = $this->getClassInFile($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
+
+            $reflClass = new \ReflectionClass($class);
+
+            foreach($reflClass->getMethods() as $method) {
+
+                $classAnnotations = $reader->getMethodAnnotations($method);
+
+
+                /**
+                 * @var $route AdminRoute
+                 */
+                foreach ($classAnnotations as $route) {
+
+
+                    $route->setActionMethod($method->getName());
+                    $route->setControllerClassName($reflClass->getName());
+                    $route->setPlugin($this);
+                    $route->configure();
+
+                    $routeContainer->add($route);
+
+                    if(!$this->has_routes){
+                        $this->has_routes = true;
+                    }
+
+                }
+            }
+
+
+        }
     }
 
     public function registerRoutes(Collection $routeContainer)
@@ -79,6 +140,7 @@ abstract class AbstractPlugin
 	        $class = $this->getClassInFile($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
 
             $reflClass = new \ReflectionClass($class);
+
 
             foreach($reflClass->getMethods() as $method) {
 

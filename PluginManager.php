@@ -30,6 +30,7 @@ class PluginManager
     public function register(AbstractPlugin $plugin, $file)
     {
 
+        $plugin->setRootDir(dirname($file));
         $this->plugins->add($plugin);
 
         if($plugin->isTheme()){
