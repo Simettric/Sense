@@ -15,7 +15,9 @@ class DummyController extends AbstractController
 {
 
     /**
-     * @Route("/{test_route}", name="test_route")
+     * @Route("/{test_route}/{id}",
+     *       name="test_route",
+     *       requirements={"test_route": "\w+", "id": "\d+"})
      */
     public function fakeAction(){
         return $this->resultResponse("test");

@@ -28,6 +28,9 @@ class Route implements RouteInterface
     /** @var array */
     public $params=array();
 
+    /** @var array */
+    public $requirements=array();
+
     /** @var string */
     public $url;
 
@@ -82,7 +85,7 @@ class Route implements RouteInterface
         $regexp = $this->path;
         foreach($found_params as $i=>$_param){
             $_key   = str_replace(array("{","}"), "", $_param);
-            $_expr = !isset($requirements[$_key]) ? '(\w+)' : $requirements[$_key];
+            $_expr = !isset($this->requirements[$_key]) ? '(\w+)' : $this->requirements[$_key];
             $regexp   = str_replace($_param, $_expr, $regexp);
             $this->url_params[$_key] = '$matches['.($i+1).']';
         }

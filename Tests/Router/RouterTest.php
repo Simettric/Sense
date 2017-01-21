@@ -60,7 +60,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null));
 
         $wp_query = $this->getMockBuilder("WP_Query")->getMock();
-        $wp_query->query_vars = array('test_route'=>'test');
+        $wp_query->query_vars = array('test_route'=>'test', 'id'=>999);
 
         $route_container = $this->getMockBuilder(RouteContainer::class)->getMock();
         $request = $this->getMockBuilder(Request::class)->getMock();

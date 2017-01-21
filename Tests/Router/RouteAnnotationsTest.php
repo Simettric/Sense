@@ -24,14 +24,27 @@ class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase
         AnnotationRegistry::registerFile(__DIR__ . "/../../Annotations/Route.php");
         $reader = new AnnotationReader();
         $reflClass = new \ReflectionClass("Simettric\\Sense\\Tests\\Router\\DummyController");
-        foreach($reflClass->getMethods() as $method){
 
-            $classAnnotations = $reader->getMethodAnnotations($method);
-            foreach($classAnnotations as $annotation ){
+
+        foreach($reflClass->getMethods() as $method)
+        {
+
+            if($method->getName() == "fakeAction")
+            {
+
+                $classAnnotations = $reader->getMethodAnnotations($method);
+
+                $annotation       = $classAnnotations[0];
                 $this->assertInstanceOf(get_class(new Route()), $annotation);
                 $this->assertNotNull($annotation->path);
                 $this->assertNotNull($annotation->name);
+                $this->assertEquals("\w+", $annotation->requirements["test_route"]);
+
+                $this->assertEquals("\d+", $annotation->requirements["id"], "falla para método " . $method->getName() );
             }
+
+
+
 
         }
 
@@ -58,11 +71,10 @@ class RouteAnnotationsTest extends \PHPUnit_Framework_TestCase
                 $classAnnotations = $reader->getMethodAnnotations($method);
                 foreach($classAnnotations as $annotation ){
 
-
-
                     $this->assertInstanceOf(get_class(new Route()), $annotation);
                     $this->assertNotNull($annotation->path);
                     $this->assertNotNull($annotation->name);
+
                 }
 
             }
