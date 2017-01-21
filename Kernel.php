@@ -14,7 +14,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Kernel
 {
-	
+
+	const HOOK_REGISTERED_SERVICES = 'sense.registered_services';
+
 	/**
 	 * @var array
 	 */
@@ -170,7 +172,7 @@ class Kernel
 
 		$this->container->compile();
 
-		do_action('sense.registered_services');
+		do_action(static::HOOK_REGISTERED_SERVICES);
 
 	}
 
