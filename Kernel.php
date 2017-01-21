@@ -170,6 +170,8 @@ class Kernel
 
 		$this->container->compile();
 
+		do_action('sense.registered_services');
+
 	}
 
 	public function registerRoutes()

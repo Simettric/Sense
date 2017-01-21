@@ -28,6 +28,11 @@ abstract class AbstractPlugin
 
     private $rootDir = false;
 
+    /**
+     * @var ContainerInterface|null
+     */
+    private $container = null;
+
     public function setRootDir($dir)
     {
         $this->rootDir = $dir;
@@ -56,6 +61,26 @@ abstract class AbstractPlugin
     public function getAdminTemplateLocations()
     {
         return [ $this->rootDir . "/AdminView"];
+    }
+
+    public function get($key)
+    {
+        if(!$this->container)
+        {
+            throw new \Exception("Service container not set yet");
+        }
+        return $this->container->get($key);
+
+    }
+
+    public function getParameter($key)
+    {
+        if(!$this->container)
+        {
+            throw new \Exception("Service container not set yet");
+        }
+        return $this->container->getParameter($key);
+
     }
 
     public abstract function getName();
@@ -175,6 +200,8 @@ abstract class AbstractPlugin
 
     public function registerServices(ContainerInterface $container)
     {
+
+        $this->container = $container;
 
 	    if(count($this->getConfigLocations())){
 		    $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
