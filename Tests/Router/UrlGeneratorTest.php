@@ -102,6 +102,10 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @expectedException     \Exception
+     * @expectedExceptionCode 0
+     */
     public function testGenerateUrlFailWithRequirements()
     {
 
@@ -114,7 +118,6 @@ class UrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->route_container->add($route2);
 
-        $this->expectException(\Exception::class);
 
         $this->url_generator->generateUrl("test_params3", array("param" => "string"));
 
