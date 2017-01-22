@@ -220,6 +220,7 @@ abstract class AbstractPlugin
     {
 
         $this->container = $container;
+        
 
 	    if(count($this->getConfigLocations())){
 		    $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
