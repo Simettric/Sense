@@ -100,10 +100,19 @@ abstract class AbstractPlugin
     {
         if(!count($this->getAdminControllerLocations())) return;
 
+        $enabled_locations = array();
+        foreach ($this->getAdminControllerLocations() as $location)
+        {
+            if(is_dir($location))
+                $enabled_locations[] = $location;
+        }
+
+        if(!count($enabled_locations)) return;
+
         AnnotationRegistry::registerFile(__DIR__ . "/Annotations/AdminRoute.php");
 
         $finder = new Finder();
-        $finder->files()->in($this->getAdminControllerLocations());
+        $finder->files()->in($enabled_locations);
         $files = $finder->files()->name('*Controller.php');
 
         $this->has_routes = false;
@@ -151,10 +160,19 @@ abstract class AbstractPlugin
 
         if(!count($this->getControllerLocations())) return;
 
+        $enabled_locations = array();
+        foreach ($this->getControllerLocations() as $location)
+        {
+            if(is_dir($location))
+                $enabled_locations[] = $location;
+        }
+
+        if(!count($enabled_locations)) return;
+
     	AnnotationRegistry::registerFile(__DIR__ . "/Annotations/Route.php");
 
         $finder = new Finder();
-        $finder->files()->in($this->getControllerLocations());
+        $finder->files()->in($enabled_locations);
         $files = $finder->files()->name('*Controller.php');
 
         $this->has_routes = false;
