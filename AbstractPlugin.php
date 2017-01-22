@@ -13,7 +13,9 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Simettric\Sense\Annotations\AdminRoute;
 use Simettric\Sense\Router\RouteInterface;
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Finder\Finder;
@@ -216,15 +218,24 @@ abstract class AbstractPlugin
 
     }
 
-    public function registerServices(ContainerInterface $container)
+    public function registerServices(ContainerBuilder $container)
     {
 
         $this->container = $container;
         
 
 	    if(count($this->getConfigLocations())){
-		    $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
-		    $loader->load('services.yml');
+
+	        try{
+
+                $loader = new YamlFileLoader($container, new FileLocator($this->getConfigLocations()));
+                $loader->load('services.yml');
+
+            }catch (FileLocatorFileNotFoundException $e)
+            {
+
+            }
+
 	    }
 
     }
