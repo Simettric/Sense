@@ -105,6 +105,7 @@ class Router
          */
         if( $route ){
 
+
             $this->_already_matched = true;
 
             try{

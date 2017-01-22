@@ -31,6 +31,8 @@ interface RouteInterface
 
     public function setControllerClassName($class_name);
 
+    public function getHTTPMethod();
+
     public function getActionMethod();
 
     public function setActionMethod($method_name);

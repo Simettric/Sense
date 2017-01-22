@@ -37,6 +37,9 @@ class Route implements RouteInterface
     /** @var string */
     public $name;
 
+    /** @var string */
+    public $method="GET";
+
     public $controller_class;
 
     public $controller_method;
@@ -144,6 +147,11 @@ class Route implements RouteInterface
     public function getActionMethod()
     {
         return $this->controller_method;
+    }
+
+    public function getHTTPMethod()
+    {
+        return $this->method;
     }
 
     public function setControllerClassName($class_name)
