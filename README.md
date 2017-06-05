@@ -34,7 +34,7 @@ class TestController extends AbstractController{
 
 ```php
 <?php
-//your-plugin-path/Views/User/profile.php     
+//your-plugin-path/View/User/profile.php     
 
     get_header();
         
